@@ -1,4 +1,4 @@
-#include "WareHouse.h"
+#include "../include/WareHouse.h"
 #include <iostream>
 
 using namespace std;
@@ -12,6 +12,7 @@ int main(int argc, char** argv){
     }
     string configurationFile = argv[1];
     WareHouse wareHouse(configurationFile);
+    
     wareHouse.start();
     if(backup!=nullptr){
     	delete backup;
