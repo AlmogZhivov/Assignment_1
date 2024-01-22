@@ -20,8 +20,8 @@ struct VolunteerConfig {
     std::string role;
     int coolDown;
     int maxDistance;
-    int distancePerStep;  // For drivers only
-    int maxOrders;        // Optional field
+    int distancePerStep; 
+    int maxOrders;        
 };
 
 WareHouse::WareHouse(const string& configFilePath)
@@ -48,15 +48,47 @@ WareHouse::WareHouse(const string& configFilePath)
             if (keyword == "customer") {
                 CustomerConfig customer;
                 if (iss >> customer.name >> customer.type >> customer.distance >> customer.maxOrders) {
-                    std::cout << "Name: " << customer.name << "\n";
-                    std::cout << "Type: " << customer.type << "\n";
-                    std::cout << "Distance: " << customer.distance << "\n";
-                    std::cout << "Max Orders: " << customer.maxOrders << "\n\n";
+                    if (customer.type == "soldier") {
+                        customers.push_back(new SoldierCustomer(customerCounter, customer.name, customer.distance, customer.maxOrders));
+                    }
+                    else if (customer.type == "civilian") {
+                        customers.push_back(new CivilianCustomer(customerCounter, customer.name, customer.distance, customer.maxOrders));
+                    }
                 }
                 customerCounter++;
             }
-            else {
-                std::cerr << "Unknown keyword: " << keyword << "\n";
+            else if (keyword == "volunteer") {
+                VolunteerConfig volunteer;
+                if (iss >> volunteer.name >> volunteer.role) {
+                    // Additional fields for drivers
+                    if (volunteer.role == "collector" && iss >> volunteer.coolDown) {
+                        std::cout << "Name: " << volunteer.name << "\n";
+                        std::cout << "Role: " << volunteer.role << "\n";
+                        std::cout << "Cool Down: " << volunteer.coolDown << "\n";
+                    }
+                    else if (volunteer.role == "limited_collector" && iss >> volunteer.coolDown >> volunteer.maxOrders) {
+                        std::cout << "Name: " << volunteer.name << "\n";
+                        std::cout << "Role: " << volunteer.role << "\n";
+                        std::cout << "Cool Down: " << volunteer.coolDown << "\n";
+                        std::cout << "Max Orders: " << volunteer.maxOrders << "\n";
+                    }
+                    else if (volunteer.role == "driver" && iss >> volunteer.maxDistance >> volunteer.distancePerStep) {
+                        std::cout << "Name: " << volunteer.name << "\n";
+                        std::cout << "Role: " << volunteer.role << "\n";
+                        std::cout << "Max Distance: " << volunteer.maxDistance << "\n";
+                        std::cout << "Distance Per Step: " << volunteer.distancePerStep << "\n";
+                    } 
+                    else if (volunteer.role == "limited_driver" && iss >> volunteer.maxDistance >> volunteer.distancePerStep >> volunteer.maxOrders) {
+                        std::cout << "Name: " << volunteer.name << "\n";
+                        std::cout << "Role: " << volunteer.role << "\n";
+                        std::cout << "Max Distance: " << volunteer.maxDistance << "\n";
+                        std::cout << "Distance Per Step: " << volunteer.distancePerStep << "\n";
+                        std::cout << "Max Orders: " << volunteer.maxOrders << "\n\n";
+                    } 
+                    else {
+                        std::cerr << "Error parsing volunteer configuration.\n";
+                    }
+                }
             }  
         }
     }
