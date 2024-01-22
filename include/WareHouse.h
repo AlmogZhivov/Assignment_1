@@ -14,6 +14,7 @@ class Volunteer;
 class WareHouse {
 
     public:
+        WareHouse();
         WareHouse(const string &configFilePath);
         void start();
         void addOrder(Order* order);
