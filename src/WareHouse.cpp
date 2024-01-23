@@ -87,8 +87,32 @@ void WareHouse::start()
     cout << "WareHouse is open!" << endl;
     string inputString;
     getline(cin, inputString);
-    while (inputString != "closeall")
+    while (inputString != "closeAll")
     {
-
+        string command = inputString.substr(0, inputString.find_first_of(' '));
+        vector<string> vecOfInput = split(inputString, " ");
+        if (command == "step")
+        {
+            SimulateStep orderAction(stoi(vecOfInput.at(1)));
+            orderAction.act(*this);
+        }
+        getline(cin, inputString);
     }
+    isOpen = false;
+}
+vector<string> WareHouse::split(string s, string delimiter)
+{
+    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+    string token;
+    vector<string> res;
+
+    while ((pos_end = s.find(delimiter, pos_start)) != string::npos)
+    {
+        token = s.substr(pos_start, pos_end - pos_start);
+        pos_start = pos_end + delim_len;
+        res.push_back(token);
+    }
+
+    res.push_back(s.substr(pos_start));
+    return res;
 }

@@ -25,6 +25,7 @@ class WareHouse {
         const vector<BaseAction*> &getActions() const;
         void close();
         void open();
+        vector<string> split(string s, string delimiter);
 
     private:
         bool isOpen;
