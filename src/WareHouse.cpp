@@ -4,6 +4,9 @@
 #include <sstream>
 #include <string>
 #include "../include/Action.h"
+#include "../include/Volunteer.h"
+using namespace std;
+
 WareHouse::WareHouse() : isOpen(false), customers(), volunteers(), actionsLog(), pendingOrders(), inProcessOrders(), completedOrders() 
 {
     customerCounter = 0;
@@ -29,10 +32,7 @@ WareHouse::WareHouse(const string& configFilePath)
     isOpen = true;
     customerCounter = 0;
     volunteerCounter = 0;
-    int volunteerID = 0;
-    int orderID = 0;
     string line;
-    int inputType = 1;
     bool inputNext = false;
     std::ifstream configFile(configFilePath);
     if (!configFile.is_open()) {
@@ -60,38 +60,35 @@ WareHouse::WareHouse(const string& configFilePath)
             else if (keyword == "volunteer") {
                 VolunteerConfig volunteer;
                 if (iss >> volunteer.name >> volunteer.role) {
-                    // Additional fields for drivers
                     if (volunteer.role == "collector" && iss >> volunteer.coolDown) {
-                        std::cout << "Name: " << volunteer.name << "\n";
-                        std::cout << "Role: " << volunteer.role << "\n";
-                        std::cout << "Cool Down: " << volunteer.coolDown << "\n";
+                        volunteers.push_back(new CollectorVolunteer(volunteerCounter, volunteer.name, volunteer.coolDown));
                     }
                     else if (volunteer.role == "limited_collector" && iss >> volunteer.coolDown >> volunteer.maxOrders) {
-                        std::cout << "Name: " << volunteer.name << "\n";
-                        std::cout << "Role: " << volunteer.role << "\n";
-                        std::cout << "Cool Down: " << volunteer.coolDown << "\n";
-                        std::cout << "Max Orders: " << volunteer.maxOrders << "\n";
+                        volunteers.push_back(new LimitedCollectorVolunteer(volunteerCounter, volunteer.name, volunteer.coolDown, volunteer.maxOrders));
                     }
                     else if (volunteer.role == "driver" && iss >> volunteer.maxDistance >> volunteer.distancePerStep) {
-                        std::cout << "Name: " << volunteer.name << "\n";
-                        std::cout << "Role: " << volunteer.role << "\n";
-                        std::cout << "Max Distance: " << volunteer.maxDistance << "\n";
-                        std::cout << "Distance Per Step: " << volunteer.distancePerStep << "\n";
+                        volunteers.push_back(new DriverVolunteer(volunteerCounter, volunteer.name, volunteer.maxDistance, volunteer.distancePerStep));
                     } 
                     else if (volunteer.role == "limited_driver" && iss >> volunteer.maxDistance >> volunteer.distancePerStep >> volunteer.maxOrders) {
-                        std::cout << "Name: " << volunteer.name << "\n";
-                        std::cout << "Role: " << volunteer.role << "\n";
-                        std::cout << "Max Distance: " << volunteer.maxDistance << "\n";
-                        std::cout << "Distance Per Step: " << volunteer.distancePerStep << "\n";
-                        std::cout << "Max Orders: " << volunteer.maxOrders << "\n\n";
+                        volunteers.push_back(new LimitedDriverVolunteer(volunteerCounter, volunteer.name, volunteer.maxDistance, volunteer.distancePerStep, volunteer.maxOrders));
                     } 
                     else {
                         std::cerr << "Error parsing volunteer configuration.\n";
                     }
                 }
+                volunteerCounter++;
             }  
         }
     }
-
     configFile.close();
+}
+void WareHouse::start()
+{
+    cout << "WareHouse is open!" << endl;
+    string inputString;
+    getline(cin, inputString);
+    while (inputString != "closeall")
+    {
+
+    }
 }
