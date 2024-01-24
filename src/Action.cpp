@@ -170,7 +170,7 @@ string RestoreWareHouse::toString() const
     if (getStatus() == ActionStatus::COMPLETED)
 		return actionString + " Completed";
 	else
-		return actionString + " Error: " + getErrorMsg()
+		return actionString + " Error: " + getErrorMsg();
 }
 RestoreWareHouse *RestoreWareHouse::clone() const
 {
