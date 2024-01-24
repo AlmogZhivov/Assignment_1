@@ -18,6 +18,7 @@ class BaseAction{
     public:
         BaseAction();
         ActionStatus getStatus() const;
+        void setActionString(string str); // Added method for actionsLog
         virtual void act(WareHouse& wareHouse)=0;
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
@@ -29,6 +30,7 @@ class BaseAction{
 
     private:
         string errorMsg;
+        string actionString;
         ActionStatus status;
 };
 

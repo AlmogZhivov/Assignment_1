@@ -87,16 +87,76 @@ void WareHouse::start()
     cout << "WareHouse is open!" << endl;
     string inputString;
     getline(cin, inputString);
-    while (inputString != "closeAll")
+    bool isClosed = false;
+    while (!isClosed)
     {
         string command = inputString.substr(0, inputString.find_first_of(' '));
         vector<string> vecOfInput = split(inputString, " ");
         if (command == "step")
         {
-            SimulateStep orderAction(stoi(vecOfInput.at(1)));
+            SimulateStep stepAction(stoi(vecOfInput.at(1)));
+            stepAction.setActionString(inputString);
+            stepAction.act(*this);
+        }
+        else if (command == "order")
+        {
+            AddOrder orderAction(stoi(vecOfInput.at(1)));
+            orderAction.setActionString(inputString);
             orderAction.act(*this);
         }
-        getline(cin, inputString);
+        else if (command == "customer")
+        {
+            AddCustomer customerAction(vecOfInput.at(1), vecOfInput.at(2), stoi(vecOfInput.at(3)), stoi(vecOfInput.at(4)));
+            customerAction.setActionString(inputString);
+            customerAction.act(*this);
+        }
+        else if (command == "orderStatus")
+        {
+            PrintOrderStatus orderStatusAction(stoi(vecOfInput.at(1)));
+            orderStatusAction.setActionString(inputString);
+            orderStatusAction.act(*this);
+        }
+        else if (command == "customerStatus")
+        {
+            PrintCustomerStatus customerStatusAction(stoi(vecOfInput.at(1)));
+            customerStatusAction.setActionString(inputString);
+            customerStatusAction.act(*this);
+        }
+        else if (command == "volunteerStatus")
+        {
+            PrintVolunteerStatus volunteerStatusAction(stoi(vecOfInput.at(1)));
+            volunteerStatusAction.setActionString(inputString);
+            volunteerStatusAction.act(*this);
+        }
+        else if (command == "log")
+        {
+            PrintActionsLog logAction;
+            logAction.setActionString(inputString);
+            logAction.act(*this);
+        }
+        else if (command == "close")
+        {
+            Close closeAction;
+            closeAction.setActionString(inputString);
+            closeAction.act(*this);
+            isClosed = true;
+
+        }
+        else if (command == "backup")
+        {
+            BackupWareHouse backupAction;
+            backupAction.setActionString(inputString);
+            backupAction.act(*this);
+        }
+        else if (command == "restore")
+        {
+            RestoreWareHouse restoreAction;
+            restoreAction.setActionString(inputString);
+            restoreAction.act(*this);
+        }
+        if (!isClosed) {
+            getline(cin, inputString);
+        }
     }
     isOpen = false;
 }
