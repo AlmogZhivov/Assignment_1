@@ -27,10 +27,10 @@ class BaseAction{
         void complete();
         void error(string errorMsg);
         string getErrorMsg() const;
+        string actionString;
 
     private:
         string errorMsg;
-        string actionString;
         ActionStatus status;
 };
 
