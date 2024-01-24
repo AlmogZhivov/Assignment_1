@@ -26,6 +26,9 @@ class WareHouse {
         void close();
         void open();
         vector<string> split(string s, string delimiter);
+        const vector<Order*> &getPendingOrders() const;
+        const vector<Order*> &getInProcessOrders() const;
+        const vector<Order*> &getCompletedOrders() const;
 
     private:
         bool isOpen;

@@ -122,23 +122,39 @@ PrintActionsLog::PrintActionsLog()
 }
 void PrintActionsLog::act(WareHouse &wareHouse)
 {
+    vector<BaseAction *>::const_iterator it;
+	for (it = wareHouse.getActions().begin(); it != wareHouse.getActions().end(); it++)
+	{
+		cout << (*it)->toString() << endl;
+	}
+	complete();
+	wareHouse.addAction(new PrintActionsLog(*this));
 }
 string PrintActionsLog::toString() const
 {
+    return actionString + " Completed";
 }
 PrintActionsLog *PrintActionsLog::clone() const
 {
     return new PrintActionsLog(*this);
 }
-// Close Class
+// Close Class - TODO
 Close::Close()
 {
 }
 void Close::act(WareHouse &wareHouse)
 {
+    for (int i = 0; i < wareHouse.getPendingOrders().size(); i++)
+	{
+		Order &order = wareHouse.getOrder(i);
+		order.toString();
+	}
+	complete();
+	wareHouse.addAction(new Close(*this));
 }
 string Close::toString() const
 {
+    return string();
 }
 Close *Close::clone() const
 {
@@ -150,9 +166,15 @@ BackupWareHouse::BackupWareHouse()
 }
 void BackupWareHouse::act(WareHouse &wareHouse)
 {
+    if (backup != nullptr)
+		delete backup;
+	complete();
+	wareHouse.addAction(new BackupWareHouse(*this));
+	backup = new WareHouse(wareHouse);
 }
 string BackupWareHouse::toString() const
 {
+    return actionString + " Completed";
 }
 BackupWareHouse *BackupWareHouse::clone() const
 {
@@ -164,6 +186,17 @@ RestoreWareHouse::RestoreWareHouse()
 }
 void RestoreWareHouse::act(WareHouse &wareHouse)
 {
+    if (backup == nullptr)
+	{ 
+		error("No backup available");
+		cout << "No backup available" << endl;
+	}
+	else
+	{
+		wareHouse = *backup;
+		complete();
+	}
+	wareHouse.addAction(new RestoreWareHouse(*this));
 }
 string RestoreWareHouse::toString() const
 {

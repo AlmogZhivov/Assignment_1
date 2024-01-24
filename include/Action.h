@@ -4,6 +4,9 @@
 #include "WareHouse.h"
 using std::string;
 using std::vector;
+#include <iostream>
+using namespace std;
+
 
 enum class ActionStatus{
     COMPLETED, ERROR

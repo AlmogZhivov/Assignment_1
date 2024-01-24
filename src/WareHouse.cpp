@@ -176,3 +176,28 @@ vector<string> WareHouse::split(string s, string delimiter)
     res.push_back(s.substr(pos_start));
     return res;
 }
+void WareHouse::addAction(BaseAction* action)
+{
+    actionsLog.push_back(action);
+}
+const std::vector<BaseAction*>& WareHouse::getActions() const
+{
+    return actionsLog;
+}
+const std::vector<Order*>& WareHouse::getPendingOrders() const
+{
+    return pendingOrders;
+}
+const std::vector<Order*>& WareHouse::getInProcessOrders() const
+{
+    return inProcessOrders;
+}
+const std::vector<Order*>& WareHouse::getCompletedOrders() const
+{
+    return completedOrders;
+}
+//dummy
+Order& WareHouse::getOrder(int orderId) const
+{
+    return *pendingOrders.at(orderId);
+}
