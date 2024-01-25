@@ -4,7 +4,7 @@
 
 #include "Order.h"
 #include "Customer.h"
-
+#include "Volunteer.h"
 class BaseAction;
 class Volunteer;
 
@@ -29,6 +29,8 @@ class WareHouse {
         const vector<Order*> &getPendingOrders() const;
         const vector<Order*> &getInProcessOrders() const;
         const vector<Order*> &getCompletedOrders() const;
+        const vector<Volunteer*> &getVolunteers() const;
+
 
     private:
         bool isOpen;

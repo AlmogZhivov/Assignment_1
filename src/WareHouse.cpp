@@ -196,6 +196,10 @@ const std::vector<Order*>& WareHouse::getCompletedOrders() const
 {
     return completedOrders;
 }
+const std::vector<Volunteer*>& WareHouse::getVolunteers() const
+{
+    return volunteers;
+}
 //dummy
 Order& WareHouse::getOrder(int orderId) const
 {

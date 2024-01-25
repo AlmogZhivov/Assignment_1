@@ -108,9 +108,19 @@ PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
 }
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
+	Volunteer &volunteer = wareHouse.getVolunteer(volunteerId);
+	if (&volunteer == nullptr)
+		error("Volunteer doesn't exist");
+	cout << volunteer.toString() << endl;
+	complete();
+	wareHouse.addAction(new PrintVolunteerStatus(*this));
 }
 string PrintVolunteerStatus::toString() const
 {
+	if (getStatus() == ActionStatus::COMPLETED)
+		return actionString + " Completed";
+	else
+		return actionString + " Error: " + getErrorMsg();
 }
 PrintVolunteerStatus *PrintVolunteerStatus::clone() const
 {
