@@ -79,9 +79,19 @@ PrintOrderStatus::PrintOrderStatus(int id) : orderId(id)
 }
 void PrintOrderStatus::act(WareHouse &wareHouse)
 {
+	Order &order = wareHouse.getOrder(orderId);
+	if (&order == nullptr)
+		error("Order doesn't exist");
+	cout << order.toString() << endl;
+	complete();
+	wareHouse.addAction(new PrintOrderStatus(*this));
 }
 string PrintOrderStatus::toString() const
 {
+	if (getStatus() == ActionStatus::COMPLETED)
+		return actionString + " Completed";
+	else
+		return actionString + " Error: " + getErrorMsg();
 }
 PrintOrderStatus *PrintOrderStatus::clone() const
 {
@@ -94,15 +104,32 @@ PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId
 }
 void PrintCustomerStatus::act(WareHouse &wareHouse)
 {
+	Customer &customer = wareHouse.getCustomer(customerId);
+	if (&customer == nullptr)
+		error("Customer doesn't exist");
+	cout << "CustomerId: " + customerId << endl;
+	for (int orderId: customer.getOrdersIds())
+	{
+		cout << "OrderId: " + orderId << endl;
+		Order &order =  wareHouse.getOrder(orderId);
+		cout << "OrderStatus: " + order.EnumToString(order.getStatus()) << endl;
+	}
+	cout << "NumOrdersLeft: " + customer.getMaxOrders() - customer.getNumOrders() << endl;
+	complete();
+	wareHouse.addAction(new PrintCustomerStatus(*this));
 }
 string PrintCustomerStatus::toString() const
 {
+	if (getStatus() == ActionStatus::COMPLETED)
+		return actionString + " Completed";
+	else
+		return actionString + " Error: " + getErrorMsg();
 }
 PrintCustomerStatus *PrintCustomerStatus::clone() const
 {
     return new PrintCustomerStatus(*this);
 }
-// PrintVolunteerStatus Class
+// PrintVolunteerStatus Class - TODO Simplification
 PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id) 
 {
 }
@@ -154,10 +181,20 @@ Close::Close()
 }
 void Close::act(WareHouse &wareHouse)
 {
-    for (int i = 0; i < wareHouse.getPendingOrders().size(); i++)
-	{
-		Order &order = wareHouse.getOrder(i);
-		order.toString();
+	for (Order* order : wareHouse.getPendingOrders()) {
+		cout << "OrderId: " + order->getId() << " ";
+		cout << "CustomerId: " + order->getCustomerId() << " ";
+		cout << "OrderStatus: " + order->EnumToString(order->getStatus());
+	}
+    for (Order* order : wareHouse.getInProcessOrders()) {
+		cout << "OrderId: " + order->getId() << " ";
+		cout << "CustomerId: " + order->getCustomerId() << " ";
+		cout << "OrderStatus: " + order->EnumToString(order->getStatus());
+	}
+	for (Order* order : wareHouse.getCompletedOrders()) {
+		cout << "OrderId: " + order->getId() << " ";
+		cout << "CustomerId: " + order->getCustomerId() << " ";
+		cout << "OrderStatus: " + order->EnumToString(order->getStatus());
 	}
 	complete();
 	wareHouse.addAction(new Close(*this));
