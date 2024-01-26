@@ -5,7 +5,7 @@ const string Order::toString() const
 {
     return "";
 }
-string Order::EnumToString(OrderStatus type)
+string Order::EnumToStringOrder(OrderStatus type)
 {
     switch (type)
     {

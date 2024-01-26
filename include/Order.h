@@ -27,7 +27,7 @@ class Order {
         int getDriverId() const;
         OrderStatus getStatus() const;
         const string toString() const;
-        string Order::EnumToString(OrderStatus type);
+        string EnumToStringOrder(OrderStatus type);
 
     private:
         const int id;

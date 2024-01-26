@@ -34,12 +34,18 @@ std::string BaseAction::getErrorMsg() const
 // SimulateStep Class
 SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) 
 {
+
 }
 void SimulateStep::act(WareHouse &wareHouse)
 {
+	
 }
 string SimulateStep::toString() const
 {
+	if (getStatus() == ActionStatus::COMPLETED)
+		return actionString + " Completed";
+	else
+		return actionString + " Error: " + getErrorMsg();
 }
 SimulateStep *SimulateStep::clone() const
 {
@@ -78,14 +84,14 @@ AddCustomer::AddCustomer(const string &customerName, const string &customerType,
 }
 void AddCustomer::act(WareHouse &wareHouse)
 {
-	if (EnumToString(CustomerType::Soldier) == "Soldier")
+	if (EnumToStringCustomer(CustomerType::Soldier) == "Soldier")
 		wareHouse.addCustomer(new SoldierCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders));
-	else if (EnumToString(CustomerType::Civilian) == "Civilian")
+	else if (EnumToStringCustomer(CustomerType::Civilian) == "Civilian")
 		wareHouse.addCustomer(new CivilianCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders));
 	complete();
 	wareHouse.addAction(new AddCustomer(*this));
 }
-string AddCustomer::EnumToString(CustomerType type)
+string AddCustomer::EnumToStringCustomer(CustomerType type)
 {
     switch (type)
     {
@@ -146,7 +152,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
 	{
 		cout << "OrderId: " + orderId << endl;
 		Order &order =  wareHouse.getOrder(orderId);
-		cout << "OrderStatus: " + order.EnumToString(order.getStatus()) << endl;
+		cout << "OrderStatus: " + order.EnumToStringOrder(order.getStatus()) << endl;
 	}
 	cout << "NumOrdersLeft: " + customer.getMaxOrders() - customer.getNumOrders() << endl;
 	complete();
@@ -218,17 +224,17 @@ void Close::act(WareHouse &wareHouse)
 	for (Order* order : wareHouse.getPendingOrders()) {
 		cout << "OrderId: " + order->getId() << " ";
 		cout << "CustomerId: " + order->getCustomerId() << " ";
-		cout << "OrderStatus: " + order->EnumToString(order->getStatus());
+		cout << "OrderStatus: " + order->EnumToStringOrder(order->getStatus());
 	}
     for (Order* order : wareHouse.getInProcessOrders()) {
 		cout << "OrderId: " + order->getId() << " ";
 		cout << "CustomerId: " + order->getCustomerId() << " ";
-		cout << "OrderStatus: " + order->EnumToString(order->getStatus());
+		cout << "OrderStatus: " + order->EnumToStringOrder(order->getStatus());
 	}
 	for (Order* order : wareHouse.getCompletedOrders()) {
 		cout << "OrderId: " + order->getId() << " ";
 		cout << "CustomerId: " + order->getCustomerId() << " ";
-		cout << "OrderStatus: " + order->EnumToString(order->getStatus());
+		cout << "OrderStatus: " + order->EnumToStringOrder(order->getStatus());
 	}
 	wareHouse.close();
 	complete();

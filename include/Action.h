@@ -71,7 +71,7 @@ class AddCustomer : public BaseAction {
         const CustomerType customerType;
         const int distance;
         const int maxOrders;
-        string AddCustomer::EnumToString(CustomerType type);
+        string EnumToStringCustomer(CustomerType type);
 };
 
 
