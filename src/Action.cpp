@@ -43,9 +43,10 @@ void SimulateStep::act(WareHouse &wareHouse)
 	vector<Order*> inProcessOrders = wareHouse.getInProcessOrders();
 	for (Order* pendingOrder: pendingOrders) {
 		for (Volunteer *volunteer: wareHouse.getVolunteers()) {
-			if (typeid(volunteer) == typeid(CollectorVolunteer)) {
-				CollectorVolunteer *v = dynamic_cast<CollectorVolunteer*>(volunteer);
-				if (v->canTakeOrder(*pendingOrder)) {
+			if(volunteer->canTakeOrder(*pendingOrder)) {
+				// Collector
+				if (typeid(volunteer) == typeid(CollectorVolunteer)) {
+					CollectorVolunteer *v = dynamic_cast<CollectorVolunteer*>(volunteer);
 					v->acceptOrder(*pendingOrder);
 					pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
                                            [pendingOrder](const Order* o) { return o == pendingOrder; }),
@@ -53,11 +54,16 @@ void SimulateStep::act(WareHouse &wareHouse)
 					pendingOrder->setCollectorId(v->getId());
 					pendingOrder->setStatus(OrderStatus::COLLECTING);
 					inProcessOrders.push_back(pendingOrder);
-					v->step();
 				}
+				//check other types
 			}
 		}
 	}
+	// decrease for each collector and driver
+
+	// iterate through volunteers and check if they've finished
+
+	// delete who reached the maximum
 }
 string SimulateStep::toString() const
 {
