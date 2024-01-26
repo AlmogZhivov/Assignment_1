@@ -180,9 +180,21 @@ void WareHouse::addAction(BaseAction* action)
 {
     actionsLog.push_back(action);
 }
+void WareHouse::addCustomer(Customer* customer)
+{
+    customers.push_back(customer);
+}
 const std::vector<BaseAction*>& WareHouse::getActions() const
 {
     return actionsLog;
+}
+const int WareHouse::getCustomerCounter() const
+{
+    return customerCounter;
+}
+const int WareHouse::getOrderCounter() const
+{
+    return orderCounter;
 }
 const std::vector<Order*>& WareHouse::getPendingOrders() const
 {
@@ -199,6 +211,10 @@ const std::vector<Order*>& WareHouse::getCompletedOrders() const
 const std::vector<Volunteer*>& WareHouse::getVolunteers() const
 {
     return volunteers;
+}
+const std::vector<Customer*>& WareHouse::getCustomers() const
+{
+    return customers;
 }
 //dummy
 Order& WareHouse::getOrder(int orderId) const

@@ -18,6 +18,7 @@ class WareHouse {
         WareHouse(const string &configFilePath);
         void start();
         void addOrder(Order* order);
+        void addCustomer(Customer* customer);
         void addAction(BaseAction* action);
         Customer &getCustomer(int customerId) const;
         Volunteer &getVolunteer(int volunteerId) const;
@@ -30,6 +31,9 @@ class WareHouse {
         const vector<Order*> &getInProcessOrders() const;
         const vector<Order*> &getCompletedOrders() const;
         const vector<Volunteer*> &getVolunteers() const;
+        const vector<Customer*> &getCustomers() const;
+        const int getCustomerCounter() const;
+        const int getOrderCounter() const;
 
 
     private:
@@ -42,4 +46,5 @@ class WareHouse {
         vector<Customer*> customers;
         int customerCounter; //For assigning unique customer IDs
         int volunteerCounter; //For assigning unique volunteer IDs
+        int orderCounter;
 };

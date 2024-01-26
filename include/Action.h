@@ -25,7 +25,7 @@ class BaseAction{
         virtual void act(WareHouse& wareHouse)=0;
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
-
+        
     protected:
         void complete();
         void error(string errorMsg);
@@ -71,6 +71,7 @@ class AddCustomer : public BaseAction {
         const CustomerType customerType;
         const int distance;
         const int maxOrders;
+        string AddCustomer::EnumToString(CustomerType type);
 };
 
 

@@ -51,9 +51,22 @@ AddOrder::AddOrder(int id) : customerId(id)
 }
 void AddOrder::act(WareHouse &wareHouse)
 {
+	Customer &customer = wareHouse.getCustomer(customerId);
+	if (&customer == nullptr || !customer.canMakeOrder())
+		cout << "Cannot place this order”" << endl;
+	Order *order = new Order(wareHouse.getOrderCounter(), customerId, customer.getCustomerDistance());
+	order->setStatus(OrderStatus::PENDING);
+	customer.addOrder(order->getId());
+	wareHouse.addOrder(order);
+	complete();
+	wareHouse.addAction(new AddOrder(*this));
 }
 string AddOrder::toString() const
 {
+	if (getStatus() == ActionStatus::COMPLETED)
+		return actionString + " Completed";
+	else
+		return actionString + " Error: " + getErrorMsg();
 }
 AddOrder *AddOrder::clone() const
 {
@@ -65,9 +78,30 @@ AddCustomer::AddCustomer(const string &customerName, const string &customerType,
 }
 void AddCustomer::act(WareHouse &wareHouse)
 {
+	if (EnumToString(CustomerType::Soldier) == "Soldier")
+		wareHouse.addCustomer(new SoldierCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders));
+	else if (EnumToString(CustomerType::Civilian) == "Civilian")
+		wareHouse.addCustomer(new CivilianCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders));
+	complete();
+	wareHouse.addAction(new AddCustomer(*this));
+}
+string AddCustomer::EnumToString(CustomerType type)
+{
+    switch (type)
+    {
+        case CustomerType::Soldier:   
+            return "Soldier";
+        case CustomerType::Civilian:   
+            return "Civilian";
+    }
+    return "";
 }
 string AddCustomer::toString() const
 {
+	if (getStatus() == ActionStatus::COMPLETED)
+		return actionString + " Completed";
+	else
+		return actionString + " Error: " + getErrorMsg();
 }
 AddCustomer *AddCustomer::clone() const
 {
@@ -129,7 +163,7 @@ PrintCustomerStatus *PrintCustomerStatus::clone() const
 {
     return new PrintCustomerStatus(*this);
 }
-// PrintVolunteerStatus Class - TODO Simplification
+// PrintVolunteerStatus Class
 PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id) 
 {
 }
@@ -175,7 +209,7 @@ PrintActionsLog *PrintActionsLog::clone() const
 {
     return new PrintActionsLog(*this);
 }
-// Close Class - TODO
+// Close Class - free memory?
 Close::Close()
 {
 }
@@ -196,6 +230,7 @@ void Close::act(WareHouse &wareHouse)
 		cout << "CustomerId: " + order->getCustomerId() << " ";
 		cout << "OrderStatus: " + order->EnumToString(order->getStatus());
 	}
+	wareHouse.close();
 	complete();
 	wareHouse.addAction(new Close(*this));
 }
