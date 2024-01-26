@@ -1,5 +1,6 @@
 #include "../include/Action.h"
 extern WareHouse *backup;
+#include <algorithm>
 
 // BaseAction Class
 BaseAction::BaseAction() : errorMsg(""), status(ActionStatus::COMPLETED)
@@ -38,7 +39,25 @@ SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
 }
 void SimulateStep::act(WareHouse &wareHouse)
 {
-	
+	vector<Order*> pendingOrders = wareHouse.getPendingOrders();
+	vector<Order*> inProcessOrders = wareHouse.getInProcessOrders();
+	for (Order* pendingOrder: pendingOrders) {
+		for (Volunteer *volunteer: wareHouse.getVolunteers()) {
+			if (typeid(volunteer) == typeid(CollectorVolunteer)) {
+				CollectorVolunteer *v = dynamic_cast<CollectorVolunteer*>(volunteer);
+				if (v->canTakeOrder(*pendingOrder)) {
+					v->acceptOrder(*pendingOrder);
+					pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
+                                           [pendingOrder](const Order* o) { return o == pendingOrder; }),
+                            pendingOrders.end());
+					pendingOrder->setCollectorId(v->getId());
+					pendingOrder->setStatus(OrderStatus::COLLECTING);
+					inProcessOrders.push_back(pendingOrder);
+					v->step();
+				}
+			}
+		}
+	}
 }
 string SimulateStep::toString() const
 {
