@@ -41,29 +41,85 @@ void SimulateStep::act(WareHouse &wareHouse)
 {
 	vector<Order*> pendingOrders = wareHouse.getPendingOrders();
 	vector<Order*> inProcessOrders = wareHouse.getInProcessOrders();
-	for (Order* pendingOrder: pendingOrders) {
-		for (Volunteer *volunteer: wareHouse.getVolunteers()) {
-			if(volunteer->canTakeOrder(*pendingOrder)) {
-				// Collector
-				if (typeid(volunteer) == typeid(CollectorVolunteer)) {
-					CollectorVolunteer *v = dynamic_cast<CollectorVolunteer*>(volunteer);
-					v->acceptOrder(*pendingOrder);
-					pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
-                                           [pendingOrder](const Order* o) { return o == pendingOrder; }),
-                            pendingOrders.end());
-					pendingOrder->setCollectorId(v->getId());
-					pendingOrder->setStatus(OrderStatus::COLLECTING);
-					inProcessOrders.push_back(pendingOrder);
+	vector<Order*> completedOrders = wareHouse.getCompletedOrders();
+	for (int i = 1; i <= numOfSteps; i++) {
+		for (Order* pendingOrder: pendingOrders) {
+			for (Volunteer *volunteer: wareHouse.getVolunteers()) {
+				if(pendingOrder->getStatus() == OrderStatus::PENDING && volunteer->canTakeOrder(*pendingOrder)) {
+					// Collector
+					if (typeid(volunteer) == typeid(CollectorVolunteer)) {
+						CollectorVolunteer *v = dynamic_cast<CollectorVolunteer*>(volunteer);
+						v->step();
+						pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
+											[pendingOrder](const Order* o) { return o == pendingOrder; }),
+								pendingOrders.end());
+						pendingOrder->setCollectorId(v->getId());
+						pendingOrder->setStatus(OrderStatus::COLLECTING);
+						inProcessOrders.push_back(pendingOrder);
+					}
+					// Limited Collector
+					else if (typeid(volunteer) == typeid(LimitedCollectorVolunteer)) {
+						LimitedCollectorVolunteer *v = dynamic_cast<LimitedCollectorVolunteer*>(volunteer);
+						v->step();
+						pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
+											[pendingOrder](const Order* o) { return o == pendingOrder; }),
+								pendingOrders.end());
+						pendingOrder->setCollectorId(v->getId());
+						pendingOrder->setStatus(OrderStatus::COLLECTING);
+						inProcessOrders.push_back(pendingOrder);
+					}
+					// Driver
+					else if (typeid(volunteer) == typeid(DriverVolunteer)) {
+						DriverVolunteer *v = dynamic_cast<DriverVolunteer*>(volunteer);
+						v->step();
+						pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
+											[pendingOrder](const Order* o) { return o == pendingOrder; }),
+								pendingOrders.end());
+						pendingOrder->setCollectorId(v->getId());
+						pendingOrder->setStatus(OrderStatus::DELIVERING);
+						inProcessOrders.push_back(pendingOrder);
+					}
+					// Limited Driver
+					else if (typeid(volunteer) == typeid(LimitedDriverVolunteer)) {
+						LimitedDriverVolunteer *v = dynamic_cast<LimitedDriverVolunteer*>(volunteer);
+						v->step();
+						pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
+											[pendingOrder](const Order* o) { return o == pendingOrder; }),
+								pendingOrders.end());
+						pendingOrder->setCollectorId(v->getId());
+						pendingOrder->setStatus(OrderStatus::DELIVERING);
+						inProcessOrders.push_back(pendingOrder);
+					}
 				}
-				//check other types
+			}
+		}
+		for (Volunteer* volunteer: wareHouse.getVolunteers()) {
+			if (!volunteer->hasOrdersLeft()) {
+				if (typeid(volunteer) == typeid(LimitedCollectorVolunteer)) {
+					LimitedCollectorVolunteer *v = dynamic_cast<LimitedCollectorVolunteer*>(volunteer);
+					if (v->getNumOrdersLeft() == 0)
+						delete v;
+				}
+				else if (typeid(volunteer) == typeid(LimitedDriverVolunteer)) {
+					LimitedDriverVolunteer *v = dynamic_cast<LimitedDriverVolunteer*>(volunteer);
+					if (v->getNumOrdersLeft() == 0)
+						delete v;
+				}
+				else if (typeid(volunteer) == typeid(CollectorVolunteer)) {
+					CollectorVolunteer *v = dynamic_cast<CollectorVolunteer*>(volunteer);
+					Order &order = wareHouse.getOrder(v->getActiveOrderId());
+					order.setStatus(OrderStatus::COLLECTING);
+					pendingOrders.push_back(&order);
+				}
+				else if (typeid(volunteer) == typeid(DriverVolunteer)) {
+					DriverVolunteer *v = dynamic_cast<DriverVolunteer*>(volunteer);
+					Order &order = wareHouse.getOrder(v->getActiveOrderId());
+					order.setStatus(OrderStatus::COMPLETED);
+					completedOrders.push_back(&order);
+				}
 			}
 		}
 	}
-	// decrease for each collector and driver
-
-	// iterate through volunteers and check if they've finished
-
-	// delete who reached the maximum
 }
 string SimulateStep::toString() const
 {
@@ -83,7 +139,7 @@ AddOrder::AddOrder(int id) : customerId(id)
 void AddOrder::act(WareHouse &wareHouse)
 {
 	Customer &customer = wareHouse.getCustomer(customerId);
-	if (&customer == nullptr || !customer.canMakeOrder())
+	if (customer.getId() == -1 || !customer.canMakeOrder())
 		cout << "Cannot place this order”" << endl;
 	Order *order = new Order(wareHouse.getOrderCounter(), customerId, customer.getCustomerDistance());
 	order->setStatus(OrderStatus::PENDING);
@@ -145,7 +201,7 @@ PrintOrderStatus::PrintOrderStatus(int id) : orderId(id)
 void PrintOrderStatus::act(WareHouse &wareHouse)
 {
 	Order &order = wareHouse.getOrder(orderId);
-	if (&order == nullptr)
+	if (order.getId() == -1)
 		error("Order doesn't exist");
 	cout << order.toString() << endl;
 	complete();
@@ -170,7 +226,7 @@ PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId
 void PrintCustomerStatus::act(WareHouse &wareHouse)
 {
 	Customer &customer = wareHouse.getCustomer(customerId);
-	if (&customer == nullptr)
+	if (customer.getId() == -1)
 		error("Customer doesn't exist");
 	cout << "CustomerId: " + customerId << endl;
 	for (int orderId: customer.getOrdersIds())
@@ -201,7 +257,7 @@ PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
 	Volunteer &volunteer = wareHouse.getVolunteer(volunteerId);
-	if (&volunteer == nullptr)
+	if (volunteer.getId() == -1)
 		error("Volunteer doesn't exist");
 	cout << volunteer.toString() << endl;
 	complete();
