@@ -274,21 +274,7 @@ Close::Close()
 }
 void Close::act(WareHouse &wareHouse)
 {
-	for (Order* order : wareHouse.getPendingOrders()) {
-		cout << "OrderId: " + order->getId() << " ";
-		cout << "CustomerId: " + order->getCustomerId() << " ";
-		cout << "OrderStatus: " + order->EnumToStringOrder(order->getStatus());
-	}
-    for (Order* order : wareHouse.getInProcessOrders()) {
-		cout << "OrderId: " + order->getId() << " ";
-		cout << "CustomerId: " + order->getCustomerId() << " ";
-		cout << "OrderStatus: " + order->EnumToStringOrder(order->getStatus());
-	}
-	for (Order* order : wareHouse.getCompletedOrders()) {
-		cout << "OrderId: " + order->getId() << " ";
-		cout << "CustomerId: " + order->getCustomerId() << " ";
-		cout << "OrderStatus: " + order->EnumToStringOrder(order->getStatus());
-	}
+	cout << this->toString() << endl;
 	wareHouse.close();
 	complete();
 	wareHouse.addAction(new Close(*this));
