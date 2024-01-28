@@ -7,7 +7,7 @@
 #include "../include/Volunteer.h"
 using namespace std;
 
-WareHouse::WareHouse() : isOpen(false), customers(), volunteers(), actionsLog(), pendingOrders(), inProcessOrders(), completedOrders() 
+WareHouse::WareHouse() : isOpen(false)
 {
     customerCounter = 0;
     volunteerCounter = 0;
