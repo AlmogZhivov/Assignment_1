@@ -172,9 +172,9 @@ PrintOrderStatus::PrintOrderStatus(int id) : orderId(id)
 }
 void PrintOrderStatus::act(WareHouse &wareHouse)
 {
-	Order &order = wareHouse.getOrder(orderId);
-	if (order.getId() == -1)
+	if (!wareHouse.orderExists(orderId))
 		error("Order doesn't exist");
+	Order &order = wareHouse.getOrder(orderId);
 	cout << order.toString() << endl;
 	complete();
 	wareHouse.addAction(new PrintOrderStatus(*this));
@@ -197,9 +197,9 @@ PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId
 }
 void PrintCustomerStatus::act(WareHouse &wareHouse)
 {
-	Customer &customer = wareHouse.getCustomer(customerId);
-	if (customer.getId() == -1)
+	if (!wareHouse.customerExists(customerId))
 		error("Customer doesn't exist");
+	Customer &customer = wareHouse.getCustomer(customerId);
 	cout << "CustomerId: " + customerId << endl;
 	for (int orderId: customer.getOrdersIds())
 	{
@@ -228,9 +228,9 @@ PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
 }
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
-	Volunteer &volunteer = wareHouse.getVolunteer(volunteerId);
-	if (volunteer.getId() == -1)
+	if (!wareHouse.volunteerExists(volunteerId))
 		error("Volunteer doesn't exist");
+	Volunteer &volunteer = wareHouse.getVolunteer(volunteerId);
 	cout << volunteer.toString() << endl;
 	complete();
 	wareHouse.addAction(new PrintVolunteerStatus(*this));

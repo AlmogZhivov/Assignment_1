@@ -33,7 +33,9 @@ class WareHouse {
         vector<Volunteer*> &getVolunteers();
         const int getCustomerCounter() const;
         const int getOrderCounter() const;
-
+        bool customerExists(int customerId) const;
+        bool volunteerExists(int volunteerId) const;
+        bool orderExists(int orderId) const;
 
     private:
         bool isOpen;

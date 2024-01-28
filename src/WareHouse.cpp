@@ -212,3 +212,15 @@ vector<Volunteer*>& WareHouse::getVolunteers()
 {
     return volunteers;
 }
+bool WareHouse::customerExists(int customerId) const
+{
+    return customerId <= customerCounter;
+}
+bool WareHouse::orderExists(int orderId) const
+{
+    return orderId <= orderCounter;
+}
+bool WareHouse::volunteerExists(int volunteerId) const
+{
+    return volunteerId <= volunteerCounter;
+}

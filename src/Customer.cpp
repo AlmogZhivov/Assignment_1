@@ -1,6 +1,6 @@
 #include "../include/Customer.h"
 #include <algorithm>
-
+#include <string>
 using namespace std;
 
 Customer::Customer(int id, const string &name, int locationDistance, int maxOrders) : id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders)
