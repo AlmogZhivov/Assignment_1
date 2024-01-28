@@ -196,28 +196,19 @@ const int WareHouse::getOrderCounter() const
 {
     return orderCounter;
 }
-const std::vector<Order*>& WareHouse::getPendingOrders() const
+std::vector<Order*>& WareHouse::getPendingOrders()
 {
     return pendingOrders;
 }
-const std::vector<Order*>& WareHouse::getInProcessOrders() const
+vector<Order*>& WareHouse::getInProcessOrders()
 {
     return inProcessOrders;
 }
-const std::vector<Order*>& WareHouse::getCompletedOrders() const
+vector<Order*>& WareHouse::getCompletedOrders()
 {
     return completedOrders;
 }
-const std::vector<Volunteer*>& WareHouse::getVolunteers() const
+vector<Volunteer*>& WareHouse::getVolunteers()
 {
     return volunteers;
-}
-const std::vector<Customer*>& WareHouse::getCustomers() const
-{
-    return customers;
-}
-//dummy
-Order& WareHouse::getOrder(int orderId) const
-{
-    return *pendingOrders.at(orderId);
 }

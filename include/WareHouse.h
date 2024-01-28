@@ -27,11 +27,10 @@ class WareHouse {
         void close();
         void open();
         vector<string> split(string s, string delimiter);
-        const vector<Order*> &getPendingOrders() const;
-        const vector<Order*> &getInProcessOrders() const;
-        const vector<Order*> &getCompletedOrders() const;
-        const vector<Volunteer*> &getVolunteers() const;
-        const vector<Customer*> &getCustomers() const;
+        vector<Order*> &getPendingOrders();
+        vector<Order*> &getInProcessOrders();
+        vector<Order*> &getCompletedOrders();
+        vector<Volunteer*> &getVolunteers();
         const int getCustomerCounter() const;
         const int getOrderCounter() const;
 
