@@ -27,15 +27,13 @@ class WareHouse {
         void close();
         void open();
         vector<string> split(string s, string delimiter);
-        vector<Order*> &getPendingOrders();
-        vector<Order*> &getInProcessOrders();
-        vector<Order*> &getCompletedOrders();
-        vector<Volunteer*> &getVolunteers();
         const int getCustomerCounter() const;
         const int getOrderCounter() const;
         bool customerExists(int customerId) const;
         bool volunteerExists(int volunteerId) const;
         bool orderExists(int orderId) const;
+        void simulateStep(int numOfSteps);
+        string stringOrdersWhenClose() const;
 
     private:
         bool isOpen;

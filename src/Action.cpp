@@ -39,59 +39,7 @@ SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
 }
 void SimulateStep::act(WareHouse &wareHouse)
 {
-	vector<Order*> pendingOrders = wareHouse.getPendingOrders();
-	vector<Order*> inProcessOrders = wareHouse.getInProcessOrders();
-	vector<Order*> completedOrders = wareHouse.getCompletedOrders();
-	vector<Volunteer*> volunteers = wareHouse.getVolunteers();
-	for (int i = 1; i <= numOfSteps; i++) {
-		for (Order* pendingOrder: pendingOrders) {
-			for (Volunteer *volunteer: wareHouse.getVolunteers()) {
-				if(pendingOrder->getStatus() == OrderStatus::PENDING) {
-					if (volunteer->canTakeOrder(*pendingOrder)) {
-						pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
-											[pendingOrder](const Order* o) { return o == pendingOrder; }),
-								pendingOrders.end());
-						if (pendingOrder->getStatus() == OrderStatus::COLLECTING) {
-							pendingOrder->setDriverId(volunteer->getId());
-							pendingOrder->setStatus(OrderStatus::DELIVERING);
-						}
-						else if (pendingOrder->getStatus() == OrderStatus::PENDING) {
-							pendingOrder->setCollectorId(volunteer->getId());
-							pendingOrder->setStatus(OrderStatus::COLLECTING);
-						}
-						inProcessOrders.push_back(pendingOrder);
-					}
-				}
-			}
-		}
-		for (Volunteer* volunteer: wareHouse.getVolunteers()) {
-			volunteer->step();
-		}
-		for (Volunteer* volunteer: wareHouse.getVolunteers()) {
-			if (volunteer->getCompletedOrderId() != NO_ORDER) {
-				for (Order* order: inProcessOrders) {
-					if (order->getStatus() == OrderStatus::COLLECTING) {
-						pendingOrders.push_back(order);
-					}
-					else if (order->getStatus() == OrderStatus::DELIVERING) {
-						order->setStatus(OrderStatus::COMPLETED);
-						completedOrders.push_back(order);
-					}
-					pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
-											[order](const Order* o) { return o == order; }),
-								pendingOrders.end());
-				}
-			}
-		}
-		for (Volunteer* volunteer: wareHouse.getVolunteers()) {
-			if (!volunteer->hasOrdersLeft()) {
-				delete volunteer;
-				volunteers.erase(remove_if(volunteers.begin(), volunteers.end(),
-											[volunteer](const Volunteer* o) { return o == volunteer; }),
-								volunteers.end());
-			}
-		}
-	}
+	wareHouse.simulateStep(numOfSteps);
 }
 string SimulateStep::toString() const
 {
@@ -274,7 +222,7 @@ Close::Close()
 }
 void Close::act(WareHouse &wareHouse)
 {
-	cout << this->toString() << endl;
+	cout << wareHouse.stringOrdersWhenClose() << endl;
 	wareHouse.close();
 	complete();
 	wareHouse.addAction(new Close(*this));

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 #include <string>
 #include "../include/Action.h"
 #include "../include/Volunteer.h"
@@ -196,22 +197,6 @@ const int WareHouse::getOrderCounter() const
 {
     return orderCounter;
 }
-std::vector<Order*>& WareHouse::getPendingOrders()
-{
-    return pendingOrders;
-}
-vector<Order*>& WareHouse::getInProcessOrders()
-{
-    return inProcessOrders;
-}
-vector<Order*>& WareHouse::getCompletedOrders()
-{
-    return completedOrders;
-}
-vector<Volunteer*>& WareHouse::getVolunteers()
-{
-    return volunteers;
-}
 bool WareHouse::customerExists(int customerId) const
 {
     return customerId <= customerCounter;
@@ -223,4 +208,74 @@ bool WareHouse::orderExists(int orderId) const
 bool WareHouse::volunteerExists(int volunteerId) const
 {
     return volunteerId <= volunteerCounter;
+}
+void WareHouse::simulateStep(int numOfSteps) {
+    for (int i = 1; i <= numOfSteps; i++) {
+		for (Order* pendingOrder: pendingOrders) {
+			for (Volunteer *volunteer: volunteers) {
+				if(pendingOrder->getStatus() == OrderStatus::PENDING) {
+					if (volunteer->canTakeOrder(*pendingOrder)) {
+						pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
+											[pendingOrder](const Order* o) { return o == pendingOrder; }),
+								pendingOrders.end());
+						if (pendingOrder->getStatus() == OrderStatus::COLLECTING) {
+							pendingOrder->setDriverId(volunteer->getId());
+							pendingOrder->setStatus(OrderStatus::DELIVERING);
+						}
+						else if (pendingOrder->getStatus() == OrderStatus::PENDING) {
+							pendingOrder->setCollectorId(volunteer->getId());
+							pendingOrder->setStatus(OrderStatus::COLLECTING);
+						}
+						inProcessOrders.push_back(pendingOrder);
+					}
+				}
+			}
+		}
+		for (Volunteer* volunteer: volunteers) {
+			volunteer->step();
+		}
+		for (Volunteer* volunteer: volunteers) {
+			if (volunteer->getCompletedOrderId() != NO_ORDER) {
+				for (Order* order: inProcessOrders) {
+					if (order->getStatus() == OrderStatus::COLLECTING) {
+						pendingOrders.push_back(order);
+					}
+					else if (order->getStatus() == OrderStatus::DELIVERING) {
+						order->setStatus(OrderStatus::COMPLETED);
+						completedOrders.push_back(order);
+					}
+					pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
+											[order](const Order* o) { return o == order; }),
+								pendingOrders.end());
+				}
+			}
+		}
+		for (Volunteer* volunteer: volunteers) {
+			if (!volunteer->hasOrdersLeft()) {
+				delete volunteer;
+				volunteers.erase(remove_if(volunteers.begin(), volunteers.end(),
+											[volunteer](const Volunteer* o) { return o == volunteer; }),
+								volunteers.end());
+			}
+		}
+	}
+}
+string WareHouse::stringOrdersWhenClose() const {
+    string output = "";
+    for (Order* order : pendingOrders) {
+		output += "OrderId: " + order->getId();
+		output += " CustomerId: " + order->getCustomerId();
+		output += " OrderStatus: " + order->EnumToStringOrder(order->getStatus());
+	}
+    for (Order* order : inProcessOrders) {
+		output += "OrderId: " + order->getId();
+		output += " CustomerId: " + order->getCustomerId();
+		output += " OrderStatus: " + order->EnumToStringOrder(order->getStatus());
+	}
+	for (Order* order : completedOrders) {
+		output += "OrderId: " + order->getId();
+		output += " CustomerId: " + order->getCustomerId();
+		output += " OrderStatus: " + order->EnumToStringOrder(order->getStatus());
+	}
+    return output;
 }
