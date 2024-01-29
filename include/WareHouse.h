@@ -34,6 +34,8 @@ class WareHouse {
         bool orderExists(int orderId) const;
         void simulateStep(int numOfSteps);
         string stringOrdersWhenClose() const;
+        ~WareHouse();
+
 
     private:
         bool isOpen;

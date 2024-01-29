@@ -6,6 +6,12 @@
 #include <string>
 #include "../include/Action.h"
 #include "../include/Volunteer.h"
+#include "../include/CivilianCustomer.h"
+#include "../include/SoldierCustomer.h"
+#include "../include/CollectorVolunteer.h"
+#include "../include/LimitedCollectorVolunteer.h"
+#include "../include/DriverVolunteer.h"
+#include "../include/LimitedDriverVolunteer.h"
 using namespace std;
 
 WareHouse::WareHouse() : isOpen(false)
@@ -51,7 +57,7 @@ WareHouse::WareHouse(const string& configFilePath)
                 if (iss >> customer.name >> customer.type >> customer.distance >> customer.maxOrders) {
                     if (customer.type == "soldier") {
                         customers.push_back(new SoldierCustomer(customerCounter, customer.name, customer.distance, customer.maxOrders));
-                    }
+                    } 
                     else if (customer.type == "civilian") {
                         customers.push_back(new CivilianCustomer(customerCounter, customer.name, customer.distance, customer.maxOrders));
                     }
@@ -265,17 +271,111 @@ string WareHouse::stringOrdersWhenClose() const {
     for (Order* order : pendingOrders) {
 		output += "OrderId: " + order->getId();
 		output += " CustomerId: " + order->getCustomerId();
-		output += " OrderStatus: " + order->EnumToStringOrder(order->getStatus());
+		output += " OrderStatus: " + order->getStringStatus();
 	}
     for (Order* order : inProcessOrders) {
 		output += "OrderId: " + order->getId();
 		output += " CustomerId: " + order->getCustomerId();
-		output += " OrderStatus: " + order->EnumToStringOrder(order->getStatus());
+		output += " OrderStatus: " + order->getStringStatus();
 	}
 	for (Order* order : completedOrders) {
 		output += "OrderId: " + order->getId();
 		output += " CustomerId: " + order->getCustomerId();
-		output += " OrderStatus: " + order->EnumToStringOrder(order->getStatus());
+		output += " OrderStatus: " + order->getStringStatus();
 	}
     return output;
 }
+    void WareHouse::addOrder(Order* order){
+        if (order != nullptr){
+            pendingOrders.push_back(order);
+            orderCounter = orderCounter + 1;
+        }
+    }
+
+    // assumes customerId is a valid id
+    Customer& WareHouse::getCustomer(int customerId) const {
+        /*
+        Customer *output = Customer(NO_VOLUNTEER, "", 1, 1);
+        for (Customer* cus : customers){
+            if ((*cus).getId() == customerId){
+                output = *cus;
+                return output;
+            }
+        }
+        return output;
+        */
+    }
+
+    // assumes volunteerId is a valid id
+    Volunteer& WareHouse::getVolunteer(int volunteerId) const {
+        /*
+        Volunteer *output;
+        for (Volunteer* vol : volunteers){
+            if ((*vol).getId() == volunteerId){
+                output = vol;
+                return *output;
+            }
+        }
+        return *output;
+        */
+    }
+
+
+    // assumes order exists
+    Order& WareHouse::getOrder(int orderId) const {
+        /*
+        Order *output;
+        for(Order* order : pendingOrders){
+            if ((*order).getId() == orderId){
+                output = order;
+                return *output;
+            }
+        }
+        for (Order *order : inProcessOrders)
+        {
+            if ((*order).getId() == orderId)
+            {
+                output = order;
+                return *output;
+            }
+        }
+        for (Order *order : completedOrders)
+        {
+            if ((*order).getId() == orderId)
+            {
+                output = order;
+                return *output;
+            }
+        }
+        return *output;
+        */
+    }
+
+    void WareHouse::close() {
+        isOpen = false;
+    }
+
+    void WareHouse::open() {
+        isOpen = true;
+    }
+
+    WareHouse::~WareHouse() {
+        for (Order* order : pendingOrders){
+            delete order;
+        }
+        for (Order* order : inProcessOrders){
+            delete order;
+        }
+        for (Order* order : completedOrders) {
+            delete order;
+        }
+        for (Volunteer* vol : volunteers) {
+            delete vol;
+        }
+        for (Customer* cus : customers) {
+            delete cus;
+        }
+        for (BaseAction* act : actionsLog){
+            delete act;
+        }
+    }
