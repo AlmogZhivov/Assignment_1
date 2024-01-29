@@ -1,13 +1,12 @@
-#include "DriverVolunteer.h"
+#include "../include/DriverVolunteer.h"
 
-class DriverVolunteer : public Volunteer {
 
     DriverVolunteer::DriverVolunteer
     (int id, const string &name, int maxDistance, int distancePerStep) :
     Volunteer(id, name), maxDistance(maxDistance), distancePerStep(distancePerStep),
     distanceLeft(0) {}
 
-    DriverVolunteer* DriverVolunteer::clone() const override {
+    DriverVolunteer* DriverVolunteer::clone() const  {
         return new DriverVolunteer(*this);
     }
 
@@ -26,7 +25,7 @@ class DriverVolunteer : public Volunteer {
     bool DriverVolunteer::decreaseDistanceLeft(){
         distanceLeft = distanceLeft - distancePerStep;
 
-        if (distacneLeft <= 0) {
+        if (this->getDistanceLeft() <= 0) {
             distanceLeft = 0;
             return true;
         }
@@ -34,24 +33,24 @@ class DriverVolunteer : public Volunteer {
         return false;
     }
 
-    bool DriverVolunteer::hasOrdersLeft() const override {
+    bool DriverVolunteer::hasOrdersLeft() const  {
         return true;
     }
 
     bool DriverVolunteer::canTakeOrder(const Order& order) const {
-        return order.getDistance<=maxDistance && !isBusy() && 
+        return order.getDistance()<=maxDistance && !isBusy() && 
         order.getStatus() == OrderStatus::COLLECTING;
     }
 
-    void DriverVolunteer::acceptOrder(const Order& order) override {
+    void DriverVolunteer::acceptOrder(const Order& order)  {
         activeOrderId = order.getId();
         distanceLeft = order.getDistance();
     }
 
-    string DriverVolunteer::toString() const override {
+    string DriverVolunteer::toString() const  {
         std::string output = "";
 
-        output += "volunteerID: " + std::to_string(id) + "\n";
+        output += "volunteerID: " + std::to_string(this->getId()) + "\n";
 
         if (isBusy)
         {
@@ -62,14 +61,14 @@ class DriverVolunteer : public Volunteer {
             output += "isBusy: False\n";
         }
 
-        output += "timeLeft: " + std::to_string(timeLeft) + "\n";
+        output += "distanceLeft: " + std::to_string(this->getDistanceLeft()) + "\n";
         output += "ordersLeft: No Limit\n";
 
         return output;
     }
 
 
-    void DriverVolunteer::step() override {
+    void DriverVolunteer::step()  {
         // in the decreaseDistanceLeft method it performs the "driving"
         if (decreaseDistanceLeft()) {
             completedOrderId = activeOrderId;
@@ -78,6 +77,3 @@ class DriverVolunteer : public Volunteer {
     }
 
     DriverVolunteer::~DriverVolunteer() {}
-
-
-}

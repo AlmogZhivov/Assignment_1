@@ -1,7 +1,8 @@
 #include "../include/Action.h"
 extern WareHouse *backup;
 #include <algorithm>
-
+#include "../include/CivilianCustomer.h"
+#include "../include/SoldierCustomer.h"
 // BaseAction Class
 BaseAction::BaseAction() : errorMsg(""), status(ActionStatus::COMPLETED)
 {
@@ -153,7 +154,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
 	{
 		cout << "OrderId: " + orderId << endl;
 		Order &order =  wareHouse.getOrder(orderId);
-		cout << "OrderStatus: " + order.EnumToStringOrder(order.getStatus()) << endl;
+		cout << "OrderStatus: " + order.getStringStatus() << endl;
 	}
 	cout << "NumOrdersLeft: " + customer.getMaxOrders() - customer.getNumOrders() << endl;
 	complete();

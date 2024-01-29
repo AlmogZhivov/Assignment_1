@@ -35,6 +35,9 @@
     int Order::getDriverId() const {
         return driverId;
     }
+    int Order::getDistance() const {
+        return distance;
+    }
 
     OrderStatus Order::getStatus() const {
         return status;

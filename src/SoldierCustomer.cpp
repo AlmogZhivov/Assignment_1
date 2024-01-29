@@ -1,7 +1,6 @@
 #include "Customer.h"
-#include "SoldierCustomer.h"
+#include "../include/SoldierCustomer.h"
 
-class SoldierCustomer {
 
     SoldierCustomer::SoldierCustomer(int id, const string &name, int locationDistance, int maxOrders) :
         Customer(id, name, locationDistance, maxOrders) {}
@@ -11,4 +10,3 @@ class SoldierCustomer {
     }
 
     SoldierCustomer::~SoldierCustomer() {}
-}

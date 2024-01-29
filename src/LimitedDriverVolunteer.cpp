@@ -1,13 +1,12 @@
-#include "LimitedDriverVolunteer.h"
+#include "../include/LimitedDriverVolunteer.h"
 
-class LimitedDriverVolunteer : public DriverVolunteer {
 
     LimitedDriverVolunteer::LimitedDriverVolunteer
         (int id, const string &name, int maxDistance, int distancePerStep, int maxOrders) : 
         DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders),
         ordersLeft(maxOrders) {}
 
-    LimitedDriverVolunteer* LimitedDriverVolunteer::clone() const override {
+    LimitedDriverVolunteer* LimitedDriverVolunteer::clone() const  {
         return new LimitedDriverVolunteer(*this);
     }
 
@@ -19,12 +18,12 @@ class LimitedDriverVolunteer : public DriverVolunteer {
         return ordersLeft;
     }
 
-    bool LimitedDriverVolunteer::hasOrdersLeft() const override {
+    bool LimitedDriverVolunteer::hasOrdersLeft() const  {
         return ordersLeft > 0;
     }
 
-    bool canTakeOrder(const Order& order) const override {
-        return hasOrdersLeft() && DriverVolunteer.canTakeOrder(order);
+    bool LimitedDriverVolunteer::canTakeOrder(const Order& order) const  {
+        return hasOrdersLeft() && canTakeOrder(order);
     }
 
     void LimitedDriverVolunteer::acceptOrder(const Order& order){
@@ -32,12 +31,12 @@ class LimitedDriverVolunteer : public DriverVolunteer {
         DriverVolunteer::acceptOrder(order);
     }
 
-    string LimitedDriverVolunteer::toString() const override {
+    string LimitedDriverVolunteer::toString() const  {
         std::string output = "";
 
-        output += "volunteerID: " + std::to_string(id) + "\n";
+        output += "volunteerID: " + std::to_string(this->getId()) + "\n";
 
-        if (isBusy)
+        if (isBusy())
         {
             output += "isBusy: True\n";
         }
@@ -46,11 +45,10 @@ class LimitedDriverVolunteer : public DriverVolunteer {
             output += "isBusy: False\n";
         }
 
-        output += "timeLeft: " + std::to_string(timeLeft) + "\n";
+        output += "distanceLeft: " + std::to_string(this->getDistanceLeft()) + "\n";
         output += "ordersLeft: " + std::to_string(ordersLeft) + "\n";
 
         return output;
     }
 
     LimitedDriverVolunteer::~LimitedDriverVolunteer() {}
-}

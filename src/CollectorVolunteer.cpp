@@ -1,6 +1,5 @@
-#include CollectorVolunteer
+#include "../include/CollectorVolunteer.h"
 
-class CollectorVolunteer : public Volunteer {
 
     CollectorVolunteer::CollectorVolunteer(int id, const string &name, int coolDown) :
         Volunteer(id, name), coolDown(coolDown), timeLeft(0) {}
@@ -21,25 +20,25 @@ class CollectorVolunteer : public Volunteer {
         return timeLeft == 0;
     }
 
-    bool CollectorVolunteer::hasOrdersLeft() const override { 
+    bool CollectorVolunteer::hasOrdersLeft() const { 
         return true;
     }
 
-    bool CollectorVolunteer::canTakeOrder(const Order& order) const override { 
+    bool CollectorVolunteer::canTakeOrder(const Order& order) const  { 
         return timeLeft == 0 && !isBusy() &&
         order.getStatus() == OrderStatus::PENDING;
     }
 
-    void CollectorVolunteer::acceptOrder(const Order& order) override { 
+    void CollectorVolunteer::acceptOrder(const Order& order)  { 
         activeOrderId = order.getId();
         completedOrderId = NO_ORDER;
         timeLeft = coolDown;
     }
 
-    string CollectorVolunteer::toString() const override {
+    string CollectorVolunteer::toString() const  {
         std::string output = "";
 
-        output += "volunteerID: " + std::to_string(id) + "\n";
+        output += "volunteerID: " + std::to_string(this->getId()) + "\n";
 
         if (isBusy)
         {
@@ -57,7 +56,7 @@ class CollectorVolunteer : public Volunteer {
     }
 
 
-    void CollectorVolunteer::step() override {
+    void CollectorVolunteer::step() {
         if(decreaseCoolDown()){
             completedOrderId = activeOrderId;
             activeOrderId = NO_ORDER;
@@ -65,4 +64,3 @@ class CollectorVolunteer : public Volunteer {
     }
 
     CollectorVolunteer::~CollectorVolunteer() {}
-}
