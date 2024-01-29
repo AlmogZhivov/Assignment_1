@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Order.h"
-#include "Volunteer.h"
-#include "CollectorVolunteer.h"
+#include "../include/Order.h"
+#include "../include/Volunteer.h"
+#include "../include/CollectorVolunteer.h"
 using std::string;
 using std::vector;
 

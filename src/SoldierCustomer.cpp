@@ -1,4 +1,3 @@
-#include "Customer.h"
 #include "../include/SoldierCustomer.h"
 
 

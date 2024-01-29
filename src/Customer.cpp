@@ -11,7 +11,9 @@
         return name;
     }
 
-
+    Customer::~Customer()
+    {
+    }
     int Customer::getId() const
     {
         return id;
@@ -34,7 +36,7 @@
     }
 
     bool Customer::canMakeOrder() const {
-        return ordersId.size() < maxOrders;
+        return ordersId.size() < (unsigned) maxOrders;
     }
 
     int Customer::addOrder(int orderId) {

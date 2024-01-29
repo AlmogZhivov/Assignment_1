@@ -52,7 +52,7 @@
 
         output += "volunteerID: " + std::to_string(this->getId()) + "\n";
 
-        if (isBusy)
+        if (isBusy())
         {
             output += "isBusy: True\n";
         }

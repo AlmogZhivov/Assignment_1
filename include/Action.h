@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "WareHouse.h"
+#include "../include/WareHouse.h"
 using std::string;
 using std::vector;
 #include <iostream>
@@ -25,7 +25,7 @@ class BaseAction{
         virtual void act(WareHouse& wareHouse)=0;
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
-        
+        virtual ~BaseAction() = 0;
     protected:
         void complete();
         void error(string errorMsg);

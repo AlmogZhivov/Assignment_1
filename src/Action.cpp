@@ -32,7 +32,9 @@ std::string BaseAction::getErrorMsg() const
 {
 	return errorMsg;
 }
-
+BaseAction::~BaseAction()
+{
+}
 // SimulateStep Class
 SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) 
 {
