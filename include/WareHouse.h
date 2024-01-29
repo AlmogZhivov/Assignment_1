@@ -25,6 +25,10 @@ class WareHouse {
         void close();
         void open();
 
+        string stringOrdersWhenClose();
+        ~WareHouse();
+
+
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;
