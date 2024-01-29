@@ -23,7 +23,7 @@ public:
     void acceptOrder(const Order &order) override;
     string toString() const override;
 
-    ~CollectorVolunteer() override;
+    //~CollectorVolunteer();
 
 private:
     const int coolDown; // The time it takes the volunteer to process an order

@@ -147,7 +147,6 @@ void WareHouse::start()
             closeAction.setActionString(inputString);
             closeAction.act(*this);
             isClosed = true;
-
         }
         else if (command == "backup")
         {

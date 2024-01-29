@@ -13,7 +13,7 @@
     }
 
     bool LimitedCollectorVolunteer::canTakeOrder(const Order& order) const  {
-        return hasOrdersLeft() && CollectorVolunteer::canTakeOrder(order);
+        return CollectorVolunteer::hasOrdersLeft() && CollectorVolunteer::canTakeOrder(order);
     }
 
     void LimitedCollectorVolunteer::acceptOrder(const Order& order)  {
@@ -50,4 +50,4 @@
         return output;
     }
 
-    LimitedCollectorVolunteer::~LimitedCollectorVolunteer() {}
+    //LimitedCollectorVolunteer::~LimitedCollectorVolunteer() {}

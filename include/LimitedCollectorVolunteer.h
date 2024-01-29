@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include "../include/Order.h"
-#include "../include/Volunteer.h"
 #include "../include/CollectorVolunteer.h"
 using std::string;
 using std::vector;
@@ -23,7 +22,7 @@ public:
     int getNumOrdersLeft() const;
     string toString() const override;
 
-    ~LimitedCollectorVolunteer() override;
+    //~LimitedCollectorVolunteer();
 
 private:
     const int maxOrders; // The number of orders the volunteer can process in the whole simulation

@@ -9,6 +9,7 @@ using std::vector;
 
 class Volunteer {
     public:
+        virtual ~Volunteer() {};
         Volunteer(int id, const string &name);
         int getId() const;
         const string &getName() const;
@@ -24,7 +25,7 @@ class Volunteer {
         virtual string toString() const = 0;
         virtual Volunteer* clone() const = 0; //Return a copy of the volunteer
 
-        virtual ~Volunteer() = 0;
+        
 
     protected:
         int completedOrderId; //Initialized to NO_ORDER if no order has been completed yet

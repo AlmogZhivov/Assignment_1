@@ -11,9 +11,9 @@
         return name;
     }
 
-    Customer::~Customer()
-    {
-    }
+    //Customer::~Customer()
+    //{
+    //}
     int Customer::getId() const
     {
         return id;

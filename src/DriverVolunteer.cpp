@@ -1,8 +1,7 @@
 #include "../include/DriverVolunteer.h"
 
 
-    DriverVolunteer::DriverVolunteer
-    (int id, const string &name, int maxDistance, int distancePerStep) :
+    DriverVolunteer::DriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep) :
     Volunteer(id, name), maxDistance(maxDistance), distancePerStep(distancePerStep),
     distanceLeft(0) {}
 
@@ -76,4 +75,4 @@
         }
     }
 
-    DriverVolunteer::~DriverVolunteer() {}
+    //DriverVolunteer::~DriverVolunteer() {}

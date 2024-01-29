@@ -1,19 +1,17 @@
 #include "../include/CollectorVolunteer.h"
 
 
-    //CollectorVolunteer::CollectorVolunteer(int id, const string &name, int coolDown) :
-      //  Volunteer(id, name), coolDown(coolDown), timeLeft(0) {}
-    CollectorVolunteer::CollectorVolunteer(int id, const string &name, int coolDown) : Volunteer(id, name), coolDown(coolDown)
-    {
-    }
+    CollectorVolunteer::CollectorVolunteer(int id, const string &name, int coolDown) :
+        Volunteer(id, name), coolDown(coolDown), timeLeft(0) {}
     int CollectorVolunteer::getCoolDown() const {
         return coolDown;
     }
-
     int CollectorVolunteer::getTimeLeft() const {
         return timeLeft;
     }
-
+    CollectorVolunteer* CollectorVolunteer::clone() const {
+        return new CollectorVolunteer(*this);
+    }
     bool CollectorVolunteer::decreaseCoolDown() {
         if (timeLeft > 0) {
             timeLeft = timeLeft - 1;
@@ -65,4 +63,4 @@
         }
     }
 
-    CollectorVolunteer::~CollectorVolunteer() {}
+    //CollectorVolunteer::~CollectorVolunteer() {}
