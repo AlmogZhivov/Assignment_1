@@ -25,7 +25,7 @@ public:
     void step() override;                                 // Decrease distanceLeft by distancePerStep
     string toString() const override;
 
-    //~DriverVolunteer();
+    ~DriverVolunteer();
 
 private:
     const int maxDistance;     // The maximum distance of ANY order the volunteer can take

@@ -481,17 +481,6 @@ WareHouse& WareHouse::operator=(const WareHouse& other){
 }
 
 WareHouse& WareHouse::operator=(WareHouse &&other) {
-    // bool isOpen;
-    // vector<BaseAction *> actionsLog;
-    // vector<Volunteer *> volunteers;
-    // vector<Order *> pendingOrders;
-    // vector<Order *> inProcessOrders;
-    // vector<Order *> completedOrders;
-    // vector<Customer *> customers;
-    // int customerCounter;  // For assigning unique customer IDs
-    // int volunteerCounter; // For assigning unique volunteer IDs
-    // int orderCounter;
-
     if (this == &other){
         return *this;
     }

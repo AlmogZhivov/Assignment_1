@@ -10,9 +10,6 @@
     int Volunteer::getId() const {
         return id;
     }
-    //Volunteer::~Volunteer()
-    //{
-    //}
     const string& Volunteer::getName() const {
         return name; // maybe should be &name ?
     }

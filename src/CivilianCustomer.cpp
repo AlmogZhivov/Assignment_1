@@ -9,4 +9,4 @@
         return new CivilianCustomer(*this);
     }
 
-    //CivilianCustomer::~CivilianCustomer() {}
+    CivilianCustomer::~CivilianCustomer() {}

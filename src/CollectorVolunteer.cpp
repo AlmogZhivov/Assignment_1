@@ -65,4 +65,4 @@
         }
     }
 
-    //CollectorVolunteer::~CollectorVolunteer() {}
+    CollectorVolunteer::~CollectorVolunteer() {}

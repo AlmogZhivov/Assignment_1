@@ -10,10 +10,6 @@
     const string& Customer::getName() const{
         return name;
     }
-
-    //Customer::~Customer()
-    //{
-    //}
     int Customer::getId() const
     {
         return id;
