@@ -63,7 +63,7 @@ void AddOrder::act(WareHouse &wareHouse)
 {
 	Customer &customer = wareHouse.getCustomer(customerId);
 	if (customer.getId() == -1 || !customer.canMakeOrder())
-		cout << "Cannot place this order”" << endl;
+		cout << "Cannot place this order" << endl;
 	Order *order = new Order(wareHouse.getOrderCounter(), customerId, customer.getCustomerDistance());
 	order->setStatus(OrderStatus::PENDING);
 	customer.addOrder(order->getId());
@@ -179,9 +179,9 @@ PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
 }
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
-	if (!wareHouse.volunteerExists(volunteerId))
-		error("Volunteer doesn't exist");
 	Volunteer &volunteer = wareHouse.getVolunteer(volunteerId);
+	if (volunteer.getId() == NO_VOLUNTEER)
+		error("Volunteer doesn't exist");
 	cout << volunteer.toString() << endl;
 	complete();
 	wareHouse.addAction(new PrintVolunteerStatus(*this));
