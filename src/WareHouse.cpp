@@ -284,97 +284,228 @@ string WareHouse::stringOrdersWhenClose() const {
 	}
     return output;
 }
-    void WareHouse::addOrder(Order* order){
-        if (order != nullptr){
-            pendingOrders.push_back(order);
-            orderCounter = orderCounter + 1;
+void WareHouse::addOrder(Order* order){
+    if (order != nullptr){
+        pendingOrders.push_back(order);
+        orderCounter = orderCounter + 1;
+    }
+}
+
+// assumes customerId is a valid id
+Customer& WareHouse::getCustomer(int customerId) const {
+    for (Customer* cus : customers){
+        if ((*cus).getId() == customerId){
+            return *cus;
         }
     }
+}
 
-    // assumes customerId is a valid id
-    Customer& WareHouse::getCustomer(int customerId) const {
-        /*
-        Customer *output = Customer(NO_VOLUNTEER, "", 1, 1);
-        for (Customer* cus : customers){
-            if ((*cus).getId() == customerId){
-                output = *cus;
-                return output;
-            }
+// assumes volunteerId is a valid id
+Volunteer& WareHouse::getVolunteer(int volunteerId) const {
+    for (Volunteer* vol : volunteers){
+        if ((*vol).getId() == volunteerId){
+            return *vol;
         }
-        return output;
-        */
     }
-
-    // assumes volunteerId is a valid id
-    Volunteer& WareHouse::getVolunteer(int volunteerId) const {
-        /*
-        Volunteer *output;
-        for (Volunteer* vol : volunteers){
-            if ((*vol).getId() == volunteerId){
-                output = vol;
-                return *output;
-            }
-        }
-        return *output;
-        */
-    }
+}
 
 
-    // assumes order exists
-    Order& WareHouse::getOrder(int orderId) const {
-        /*
-        Order *output;
-        for(Order* order : pendingOrders){
-            if ((*order).getId() == orderId){
-                output = order;
-                return *output;
-            }
-        }
-        for (Order *order : inProcessOrders)
+// assumes order exists
+Order& WareHouse::getOrder(int orderId) const {
+    for(Order* order : pendingOrders){
+        if ((*order).getId() == orderId)
         {
-            if ((*order).getId() == orderId)
-            {
-                output = order;
-                return *output;
-            }
+            return *order;
         }
-        for (Order *order : completedOrders)
+    }
+    for (Order *order : inProcessOrders)
+    {
+        if ((*order).getId() == orderId)
         {
-            if ((*order).getId() == orderId)
-            {
-                output = order;
-                return *output;
-            }
+            return *order;
         }
-        return *output;
-        */
+    }
+    for (Order *order : completedOrders)
+    {
+        if ((*order).getId() == orderId)
+        {
+            return *order;
+        }
+    }
+}
+
+void WareHouse::close() {
+    isOpen = false;
+}
+
+void WareHouse::open() {
+    isOpen = true;
+}
+
+WareHouse::~WareHouse() {
+    for (Order* order : pendingOrders){
+        delete order;
+    }
+    for (Order* order : inProcessOrders){
+        delete order;
+    }
+    for (Order* order : completedOrders) {
+        delete order;
+    }
+    for (Volunteer* vol : volunteers) {
+        delete vol;
+    }
+    for (Customer* cus : customers) {
+        delete cus;
+    }
+    for (BaseAction* act : actionsLog){
+        delete act;
+    }
+}
+
+
+WareHouse::WareHouse(const WareHouse& other){
+    this->isOpen = other.isOpen;
+    this->customerCounter = other.customerCounter;
+    this->volunteerCounter = other.volunteerCounter;
+    this->orderCounter = other.orderCounter;
+
+    //copying vectors:
+
+    for (BaseAction* act : other.actionsLog){
+        this->actionsLog.push_back(act->clone());
+    }
+    for (Volunteer* vol : other.volunteers){
+        this->volunteers.push_back(vol->clone());
+    }
+    for (Order* order : other.pendingOrders){
+        this->pendingOrders.push_back(order->clone());
+    }
+    for (Order* order : other.inProcessOrders)
+    {
+        this->inProcessOrders.push_back(order->clone());
+    }
+    for (Order* order : other.completedOrders)
+    {
+        this->completedOrders.push_back(order->clone());
+    }
+    for (Customer* cust : other.customers){
+        this->customers.push_back(cust->clone());
+    }
+}
+
+WareHouse::WareHouse(WareHouse &&other) : 
+      isOpen(other.isOpen),
+      customerCounter(other.customerCounter),
+      volunteerCounter(other.volunteerCounter),
+      orderCounter(other.orderCounter),
+      actionsLog(std::move(other.actionsLog)),
+      volunteers(std::move(other.volunteers)),
+      pendingOrders(std::move(other.pendingOrders)),
+      inProcessOrders(std::move(other.inProcessOrders)),
+      completedOrders(std::move(other.completedOrders)),
+      customers(std::move(other.customers)) {}
+    
+WareHouse& WareHouse::operator=(const WareHouse& other){
+    if (this == &other) {
+        return *this;
     }
 
-    void WareHouse::close() {
-        isOpen = false;
+    this->isOpen = other.isOpen;
+    this->customerCounter = other.customerCounter;
+    this->volunteerCounter = other.volunteerCounter;
+    this->orderCounter = other.orderCounter;
+
+    // deleting the vectors:
+    for (Order *order : pendingOrders)
+    {
+        delete order;
+    }
+    for (Order *order : inProcessOrders)
+    {
+        delete order;
+    }
+    for (Order *order : completedOrders)
+    {
+        delete order;
+    }
+    for (Volunteer *vol : volunteers)
+    {
+        delete vol;
+    }
+    for (Customer *cus : customers)
+    {
+        delete cus;
+    }
+    for (BaseAction *act : actionsLog)
+    {
+        delete act;
     }
 
-    void WareHouse::open() {
-        isOpen = true;
+    //clearing all vectors
+    actionsLog.clear();
+    volunteers.clear();
+    pendingOrders.clear();
+    inProcessOrders.clear();
+    completedOrders.clear();
+    customers.clear();
+
+
+    // copying vectors:
+    for (BaseAction *act : other.actionsLog)
+    {
+        this->actionsLog.push_back(act->clone());
+    }
+    for (Volunteer *vol : other.volunteers)
+    {
+        this->volunteers.push_back(vol->clone());
+    }
+    for (Order *order : other.pendingOrders)
+    {
+        this->pendingOrders.push_back(order->clone());
+    }
+    for (Order *order : other.inProcessOrders)
+    {
+        this->inProcessOrders.push_back(order->clone());
+    }
+    for (Order *order : other.completedOrders)
+    {
+        this->completedOrders.push_back(order->clone());
+    }
+    for (Customer *cust : other.customers)
+    {
+        this->customers.push_back(cust->clone());
     }
 
-    WareHouse::~WareHouse() {
-        for (Order* order : pendingOrders){
-            delete order;
-        }
-        for (Order* order : inProcessOrders){
-            delete order;
-        }
-        for (Order* order : completedOrders) {
-            delete order;
-        }
-        for (Volunteer* vol : volunteers) {
-            delete vol;
-        }
-        for (Customer* cus : customers) {
-            delete cus;
-        }
-        for (BaseAction* act : actionsLog){
-            delete act;
-        }
+    return *this;
+}
+
+WareHouse& WareHouse::operator=(WareHouse &&other) {
+    // bool isOpen;
+    // vector<BaseAction *> actionsLog;
+    // vector<Volunteer *> volunteers;
+    // vector<Order *> pendingOrders;
+    // vector<Order *> inProcessOrders;
+    // vector<Order *> completedOrders;
+    // vector<Customer *> customers;
+    // int customerCounter;  // For assigning unique customer IDs
+    // int volunteerCounter; // For assigning unique volunteer IDs
+    // int orderCounter;
+
+    if (this == &other){
+        return *this;
     }
+
+    this->isOpen = other.isOpen;
+    this->customerCounter = other.customerCounter;
+    this->volunteerCounter = other.volunteerCounter;
+    this->orderCounter = other.orderCounter;
+    this->actionsLog = std::move(other.actionsLog);
+    this->volunteers = std::move(other.volunteers);
+    this->pendingOrders = std::move(other.pendingOrders);
+    this->inProcessOrders = std::move(other.inProcessOrders);
+    this->completedOrders = std::move(other.completedOrders);
+    this->customers = std::move(other.customers);
+
+    return *this;
+}

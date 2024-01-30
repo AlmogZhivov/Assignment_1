@@ -34,7 +34,17 @@ class WareHouse {
         bool orderExists(int orderId) const;
         void simulateStep(int numOfSteps);
         string stringOrdersWhenClose() const;
+        
+        // rule of 3
         ~WareHouse();
+        WareHouse(const WareHouse& other);
+        WareHouse& operator=(const WareHouse& other);
+        //rule of 5
+        WareHouse(WareHouse&& other);
+        WareHouse& operator=(WareHouse&& other);
+
+
+
 
 
     private:
