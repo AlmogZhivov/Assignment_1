@@ -62,14 +62,19 @@ AddOrder::AddOrder(int id) : customerId(id)
 void AddOrder::act(WareHouse &wareHouse)
 {
 	Customer &customer = wareHouse.getCustomer(customerId);
+	//cout << "here: " + to_string(customer.getId()) << endl;
+	//cout << "here: " + customer.getName() << endl;
+	//cout << "here: " + to_string(customer.getMaxOrders()) << endl;
 	if (customer.getId() == -1 || !customer.canMakeOrder())
 		cout << "Cannot place this order" << endl;
-	Order *order = new Order(wareHouse.getOrderCounter(), customerId, customer.getCustomerDistance());
-	order->setStatus(OrderStatus::PENDING);
-	customer.addOrder(order->getId());
-	wareHouse.addOrder(order);
-	complete();
-	wareHouse.addAction(new AddOrder(*this));
+	else {
+		Order *order = new Order(wareHouse.getOrderCounter(), customerId, customer.getCustomerDistance());
+		order->setStatus(OrderStatus::PENDING);
+		customer.addOrder(order->getId());
+		wareHouse.addOrder(order);
+		complete();
+		wareHouse.addAction(new AddOrder(*this));
+	}
 }
 string AddOrder::toString() const
 {
@@ -151,14 +156,14 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
 	if (!wareHouse.customerExists(customerId))
 		error("Customer doesn't exist");
 	Customer &customer = wareHouse.getCustomer(customerId);
-	cout << "CustomerId: " + customerId << endl;
+	cout << "CustomerId: " + to_string(customerId) << endl;
 	for (int orderId: customer.getOrdersIds())
 	{
-		cout << "OrderId: " + orderId << endl;
+		cout << "OrderId: " + to_string(orderId) << endl;
 		Order &order =  wareHouse.getOrder(orderId);
 		cout << "OrderStatus: " + order.getStringStatus() << endl;
 	}
-	cout << "NumOrdersLeft: " + customer.getMaxOrders() - customer.getNumOrders() << endl;
+	cout << "NumOrdersLeft: " + to_string(customer.getMaxOrders() - customer.getNumOrders()) << endl;
 	complete();
 	wareHouse.addAction(new PrintCustomerStatus(*this));
 }

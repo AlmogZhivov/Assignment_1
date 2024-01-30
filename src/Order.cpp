@@ -1,5 +1,5 @@
 #include "../include/Order.h"
-
+#include <iostream>
 
 Order::Order(int id, int customerId, int distance) :
     id(id), customerId(customerId), distance(distance) {
@@ -66,7 +66,7 @@ const string Order::getStringStatus() const {
 const string Order::toString() const 
 {
     std::string output = "";
-
+    //std::cout << "iddd: " + std::to_string(id) << std::endl;
     output += "OrderId: " + std::to_string(id) + "\n";
     output += "OrderStatus: " + getStringStatus() + "\n";
     output += "CustomerID: " + std::to_string(customerId) + "\n";

@@ -19,6 +19,7 @@ WareHouse::WareHouse() : isOpen(false)
 {
     customerCounter = 0;
     volunteerCounter = 0;
+    orderCounter = 0;
 
     defaultOrder = new Order(-1, NO_VOLUNTEER, NO_VOLUNTEER);
     defaultCustomer = new CivilianCustomer(NO_VOLUNTEER, "Default", 1, 1);
@@ -44,6 +45,10 @@ WareHouse::WareHouse(const string& configFilePath)
     isOpen = true;
     customerCounter = 0;
     volunteerCounter = 0;
+    orderCounter = 0;
+    defaultOrder = new Order(-1, NO_VOLUNTEER, NO_VOLUNTEER);
+    defaultCustomer = new CivilianCustomer(NO_VOLUNTEER, "Default", 1, 1);
+    defaultVolunteer = new LimitedCollectorVolunteer(NO_VOLUNTEER, "Default", 1, 0);
     string line;
     bool inputNext = false;
     std::ifstream configFile(configFilePath);
@@ -61,6 +66,10 @@ WareHouse::WareHouse(const string& configFilePath)
                 CustomerConfig customer;
                 if (iss >> customer.name >> customer.type >> customer.distance >> customer.maxOrders) {
                     if (customer.type == "soldier") {
+                        //cout << "mahsan: " + to_string(customerCounter) << endl;
+                        //cout << "mahsan: " + customer.name << endl;
+                        //cout << "mahsan: " + to_string(customer.distance) << endl;
+                        //cout << "mahsan: " + to_string(customer.maxOrders) << endl;
                         customers.push_back(new SoldierCustomer(customerCounter, customer.name, customer.distance, customer.maxOrders));
                     } 
                     else if (customer.type == "civilian") {
@@ -112,6 +121,7 @@ void WareHouse::start()
         }
         else if (command == "order")
         {
+            //cout << "insideOrder: " + to_string(stoi(vecOfInput.at(1))) << endl;
             AddOrder orderAction(stoi(vecOfInput.at(1)));
             orderAction.setActionString(inputString);
             orderAction.act(*this);
@@ -273,18 +283,18 @@ void WareHouse::simulateStep(int numOfSteps) {
 string WareHouse::stringOrdersWhenClose() const {
     string output = "";
     for (Order* order : pendingOrders) {
-		output += "OrderId: " + order->getId();
-		output += " CustomerId: " + order->getCustomerId();
+		output += "OrderId: " + to_string(order->getId());
+		output += " CustomerId: " + to_string(order->getCustomerId());
 		output += " OrderStatus: " + order->getStringStatus();
 	}
     for (Order* order : inProcessOrders) {
-		output += "OrderId: " + order->getId();
-		output += " CustomerId: " + order->getCustomerId();
+		output += "OrderId: " + to_string(order->getId());
+		output += " CustomerId: " + to_string(order->getCustomerId());
 		output += " OrderStatus: " + order->getStringStatus();
 	}
 	for (Order* order : completedOrders) {
-		output += "OrderId: " + order->getId();
-		output += " CustomerId: " + order->getCustomerId();
+		output += "OrderId: " + to_string(order->getId());
+		output += " CustomerId: " + to_string(order->getCustomerId());
 		output += " OrderStatus: " + order->getStringStatus();
 	}
     return output;
@@ -293,12 +303,16 @@ void WareHouse::addOrder(Order* order){
     if (order != nullptr){
         pendingOrders.push_back(order);
         orderCounter = orderCounter + 1;
+        //cout << "inWarehouse: " + to_string(orderCounter) << endl;
     }
 }
 
 // assumes customerId is a valid id
 Customer& WareHouse::getCustomer(int customerId) const {
     for (Customer* cus : customers){
+        //cout << "here2: " + to_string(cus->getId()) << endl;
+	    //cout << "here2: " + cus->getName() << endl;
+	    //cout << "here2: " + to_string(cus->getMaxOrders()) << endl;
         if ((*cus).getId() == customerId){
             return *cus;
         }
