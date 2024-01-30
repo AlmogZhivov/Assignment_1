@@ -12,12 +12,17 @@
 #include "../include/LimitedCollectorVolunteer.h"
 #include "../include/DriverVolunteer.h"
 #include "../include/LimitedDriverVolunteer.h"
+#include "../include/Order.h"
 using namespace std;
 
 WareHouse::WareHouse() : isOpen(false)
 {
     customerCounter = 0;
     volunteerCounter = 0;
+
+    defaultOrder = new Order(-1, NO_VOLUNTEER, NO_VOLUNTEER);
+    defaultCustomer = new CivilianCustomer(NO_VOLUNTEER, "Default", 1, 1);
+    defaultVolunteer = new LimitedCollectorVolunteer(NO_VOLUNTEER, "Default", 1, 0);
 }
 struct CustomerConfig {
     std::string name;
@@ -298,6 +303,7 @@ Customer& WareHouse::getCustomer(int customerId) const {
             return *cus;
         }
     }
+    return *defaultCustomer;
 }
 
 // assumes volunteerId is a valid id
@@ -307,6 +313,7 @@ Volunteer& WareHouse::getVolunteer(int volunteerId) const {
             return *vol;
         }
     }
+    return *defaultVolunteer;
 }
 
 
@@ -332,6 +339,7 @@ Order& WareHouse::getOrder(int orderId) const {
             return *order;
         }
     }
+    return *defaultOrder;
 }
 
 void WareHouse::close() {
@@ -361,6 +369,11 @@ WareHouse::~WareHouse() {
     for (BaseAction* act : actionsLog){
         delete act;
     }
+
+    // deleting defaults
+    delete defaultCustomer;
+    delete defaultVolunteer;
+    delete defaultOrder;
 }
 
 
@@ -392,6 +405,11 @@ WareHouse::WareHouse(const WareHouse& other){
     for (Customer* cust : other.customers){
         this->customers.push_back(cust->clone());
     }
+
+    // copying defaults
+    this->defaultCustomer = other.defaultCustomer->clone();
+    this->defaultVolunteer = other.defaultVolunteer->clone();
+    this->defaultOrder = other.defaultOrder->clone();
 }
 
 WareHouse::WareHouse(WareHouse &&other) : 
@@ -404,7 +422,17 @@ WareHouse::WareHouse(WareHouse &&other) :
       pendingOrders(std::move(other.pendingOrders)),
       inProcessOrders(std::move(other.inProcessOrders)),
       completedOrders(std::move(other.completedOrders)),
-      customers(std::move(other.customers)) {}
+      customers(std::move(other.customers)) {
+
+      this->defaultCustomer = other.defaultCustomer->clone();
+      this->defaultVolunteer = other.defaultVolunteer->clone();
+      this->defaultOrder = other.defaultOrder->clone();
+
+    //nulling ohter's defaults
+    other.defaultCustomer = nullptr;
+    other.defaultVolunteer = nullptr;
+    other.defaultOrder = nullptr;
+}
     
 WareHouse& WareHouse::operator=(const WareHouse& other){
     if (this == &other) {
@@ -477,6 +505,11 @@ WareHouse& WareHouse::operator=(const WareHouse& other){
         this->customers.push_back(cust->clone());
     }
 
+    // copying defaults
+    this->defaultCustomer = other.defaultCustomer->clone();
+    this->defaultVolunteer = other.defaultVolunteer->clone();
+    this->defaultOrder = other.defaultOrder->clone();
+
     return *this;
 }
 
@@ -495,6 +528,16 @@ WareHouse& WareHouse::operator=(WareHouse &&other) {
     this->inProcessOrders = std::move(other.inProcessOrders);
     this->completedOrders = std::move(other.completedOrders);
     this->customers = std::move(other.customers);
+
+    // copying defaults
+    this->defaultCustomer = other.defaultCustomer;
+    this->defaultOrder = other.defaultOrder;
+    this->defaultVolunteer = other.defaultVolunteer;
+
+    // nulling other's defaults
+    other.defaultCustomer = nullptr;
+    other.defaultOrder = nullptr;
+    other.defaultVolunteer = nullptr;
 
     return *this;
 }
