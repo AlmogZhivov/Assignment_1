@@ -13,7 +13,7 @@
     }
 
     bool LimitedCollectorVolunteer::canTakeOrder(const Order& order) const  {
-        return CollectorVolunteer::hasOrdersLeft() && CollectorVolunteer::canTakeOrder(order);
+        return hasOrdersLeft() && CollectorVolunteer::canTakeOrder(order);
     }
 
     void LimitedCollectorVolunteer::acceptOrder(const Order& order)  {
@@ -39,17 +39,16 @@
         {
             output += "isBusy: True\n";
             output += "OrderID: " + std::to_string(activeOrderId) + "\n";
+            output += "timeLeft: " + std::to_string(getTimeLeft()) + "\n";
         }
         else
         {
             output += "isBusy: False\n";
             output += "OrderID: None\n";
+            output += "timeLeft: None\n";
         }
 
-        output += "timeLeft: " + std::to_string(this->getTimeLeft()) + "\n";
         output += "ordersLeft: " + std::to_string(ordersLeft) + "\n";
 
         return output;
     }
-
-    LimitedCollectorVolunteer::~LimitedCollectorVolunteer() {}

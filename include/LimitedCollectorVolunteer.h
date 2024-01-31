@@ -22,7 +22,6 @@ public:
     int getNumOrdersLeft() const;
     string toString() const override;
 
-    ~LimitedCollectorVolunteer();
 
 private:
     const int maxOrders; // The number of orders the volunteer can process in the whole simulation

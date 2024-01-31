@@ -11,7 +11,7 @@
         return id;
     }
     const string& Volunteer::getName() const {
-        return name; // maybe should be &name ?
+        return name;
     }
 
     int Volunteer::getActiveOrderId() const {

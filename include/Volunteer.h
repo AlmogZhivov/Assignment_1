@@ -9,7 +9,7 @@ using std::vector;
 
 class Volunteer {
     public:
-        virtual ~Volunteer() {};
+        virtual ~Volunteer() = default;
         Volunteer(int id, const string &name);
         int getId() const;
         const string &getName() const;

@@ -23,7 +23,7 @@
     }
 
     bool LimitedDriverVolunteer::canTakeOrder(const Order& order) const  {
-        return hasOrdersLeft() && canTakeOrder(order);
+        return hasOrdersLeft() && DriverVolunteer::canTakeOrder(order);
     }
 
     void LimitedDriverVolunteer::acceptOrder(const Order& order){
@@ -40,17 +40,18 @@
         {
             output += "isBusy: True\n";
             output += "OrderID: " + std::to_string(activeOrderId) + "\n";
+            output += "distance_Left: " + std::to_string(getDistanceLeft()) + "\n";
         }
         else
         {
             output += "isBusy: False\n";
             output += "OrderID: None\n";
+            output += "distance_Left: None\n";
         }
 
-        output += "distanceLeft: " + std::to_string(this->getDistanceLeft()) + "\n";
+
         output += "ordersLeft: " + std::to_string(ordersLeft) + "\n";
 
         return output;
     }
 
-    LimitedDriverVolunteer::~LimitedDriverVolunteer() {}

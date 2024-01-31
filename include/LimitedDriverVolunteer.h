@@ -22,7 +22,6 @@ public:
     void acceptOrder(const Order &order) override;        // Assign distanceLeft to order's distance and decrease ordersLeft
     string toString() const override;
 
-    ~LimitedDriverVolunteer();
 
 private:
     const int maxOrders; // The number of orders the volunteer can process in the whole simulation

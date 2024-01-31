@@ -8,4 +8,3 @@
         return new SoldierCustomer(*this);
     }
 
-    SoldierCustomer::~SoldierCustomer() {}

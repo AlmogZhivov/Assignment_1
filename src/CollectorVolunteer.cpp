@@ -44,14 +44,16 @@
         {
             output += "isBusy: True\n";
             output += "OrderID: " + std::to_string(activeOrderId) + "\n";
+            output += "timeLeft: " + std::to_string(timeLeft) + "\n";
         }
         else
         {
             output += "isBusy: False\n";
             output += "OrderID: None\n";
+            output += "timeLeft: None\n";
         }
 
-        output += "timeLeft: " + std::to_string(timeLeft) + "\n";
+        
         output += "ordersLeft: No Limit\n";
 
         return output;
@@ -64,5 +66,3 @@
             activeOrderId = NO_ORDER;
         }
     }
-
-    CollectorVolunteer::~CollectorVolunteer() {}

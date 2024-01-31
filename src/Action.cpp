@@ -43,6 +43,8 @@ SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
 void SimulateStep::act(WareHouse &wareHouse)
 {
 	wareHouse.simulateStep(numOfSteps);
+	this->actionString = "simulateStep " + to_string(numOfSteps);
+	wareHouse.addAction(new SimulateStep(*this));
 }
 string SimulateStep::toString() const
 {
@@ -62,12 +64,9 @@ AddOrder::AddOrder(int id) : customerId(id)
 void AddOrder::act(WareHouse &wareHouse)
 {
 	Customer &customer = wareHouse.getCustomer(customerId);
-	//cout << "here: " + to_string(customer.getId()) << endl;
-	//cout << "here: " + customer.getName() << endl;
-	//cout << "here: " + to_string(customer.getMaxOrders()) << endl;
 	if (customer.getId() == -1 || !customer.canMakeOrder()) {
-		cout << "Cannot place this order" << endl;
-		error("Cannot place this order");
+		cout << "Error: Cannot place this order" << endl;
+		error("");
 		wareHouse.addAction(new AddOrder(*this));
 	}
 	else {
@@ -84,7 +83,7 @@ string AddOrder::toString() const
 	if (getStatus() == ActionStatus::COMPLETED)
 		return actionString + " Completed";
 	else
-		return actionString + " Error: " + getErrorMsg();
+		return actionString + " Error" + getErrorMsg();
 }
 AddOrder *AddOrder::clone() const
 {
@@ -132,8 +131,8 @@ PrintOrderStatus::PrintOrderStatus(int id) : orderId(id)
 void PrintOrderStatus::act(WareHouse &wareHouse)
 {
 	if (!wareHouse.orderExists(orderId)) {
-		cout << "Order doesn't exist" << endl;
-		error("Order doesn't exist");
+		cout << "Error: Order doesn't exist" << endl;
+		error("");
 		wareHouse.addAction(new PrintOrderStatus(*this));
 	}
 	else {
@@ -162,8 +161,8 @@ PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId
 void PrintCustomerStatus::act(WareHouse &wareHouse)
 {
 	if (!wareHouse.customerExists(customerId)) {
-		cout << "Customer doesn't exist" << endl;
-		error("Customer doesn't exist");
+		cout << "Error: Customer doesn't exist" << endl;
+		error("");
 		wareHouse.addAction(new PrintCustomerStatus(*this));
 	}
 	else {
@@ -185,7 +184,7 @@ string PrintCustomerStatus::toString() const
 	if (getStatus() == ActionStatus::COMPLETED)
 		return actionString + " Completed";
 	else
-		return actionString + " Error: " + getErrorMsg();
+		return actionString + " Error" + getErrorMsg();
 }
 PrintCustomerStatus *PrintCustomerStatus::clone() const
 {
@@ -200,8 +199,8 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse)
 	Volunteer &volunteer = wareHouse.getVolunteer(volunteerId);
 	if (volunteer.getId() == NO_VOLUNTEER)
 	{
-		cout << "Volunteer doesn't exist" << endl;
-		error("Volunteer doesn't exist");
+		cout << "Error: Volunteer doesn't exist" << endl;
+		error("");
 		wareHouse.addAction(new PrintVolunteerStatus(*this));
 	}
 	else {
@@ -215,7 +214,7 @@ string PrintVolunteerStatus::toString() const
 	if (getStatus() == ActionStatus::COMPLETED)
 		return actionString + " Completed";
 	else
-		return actionString + " Error: " + getErrorMsg();
+		return actionString + " Error" + getErrorMsg();
 }
 PrintVolunteerStatus *PrintVolunteerStatus::clone() const
 {
@@ -290,8 +289,8 @@ void RestoreWareHouse::act(WareHouse &wareHouse)
 {
     if (backup == nullptr)
 	{ 
-		error("No backup available");
-		cout << "No backup available" << endl;
+		error("");
+		cout << "Error: No backup available" << endl;
 	}
 	else
 	{
@@ -305,7 +304,7 @@ string RestoreWareHouse::toString() const
     if (getStatus() == ActionStatus::COMPLETED)
 		return actionString + " Completed";
 	else
-		return actionString + " Error: " + getErrorMsg();
+		return actionString + " Error" + getErrorMsg();
 }
 RestoreWareHouse *RestoreWareHouse::clone() const
 {

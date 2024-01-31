@@ -11,7 +11,6 @@ public:
     SoldierCustomer(int id, const string &name, int locationDistance, int maxOrders);
     SoldierCustomer *clone() const override;
 
-    ~SoldierCustomer();
 
 private:
 };

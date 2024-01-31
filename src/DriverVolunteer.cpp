@@ -1,4 +1,5 @@
 #include "../include/DriverVolunteer.h"
+#include <iostream>
 
 
     DriverVolunteer::DriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep) :
@@ -37,7 +38,7 @@
     }
 
     bool DriverVolunteer::canTakeOrder(const Order& order) const {
-        return order.getDistance()<=maxDistance && !isBusy() && 
+        return order.getDistance() <= maxDistance && !isBusy() && 
         order.getStatus() == OrderStatus::COLLECTING;
     }
 
@@ -55,14 +56,16 @@
         {
             output += "isBusy: True\n";
             output += "OrderID: " + std::to_string(activeOrderId) + "\n";
+            output += "distance_Left: " + std::to_string(getDistanceLeft()) + "\n";
         }
         else
         {
             output += "isBusy: False\n";
             output += "OrderID: None\n";
+            output += "distance_Left: None\n";
         }
 
-        output += "distanceLeft: " + std::to_string(this->getDistanceLeft()) + "\n";
+        
         output += "ordersLeft: No Limit\n";
 
         return output;
@@ -77,4 +80,3 @@
         }
     }
 
-    DriverVolunteer::~DriverVolunteer() {}

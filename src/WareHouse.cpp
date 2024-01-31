@@ -90,6 +90,7 @@ WareHouse::WareHouse(const string& configFilePath)
             }  
         }
     }
+
     configFile.close();
 }
 void WareHouse::start()
@@ -192,6 +193,7 @@ void WareHouse::addAction(BaseAction* action)
 void WareHouse::addCustomer(Customer* customer)
 {
     customers.push_back(customer);
+    customerCounter = customerCounter + 1;
 }
 const std::vector<BaseAction*>& WareHouse::getActions() const
 {
@@ -207,65 +209,78 @@ const int WareHouse::getOrderCounter() const
 }
 bool WareHouse::customerExists(int customerId) const
 {
-    return customerId <= customerCounter;
+    return customerId < customerCounter;
 }
 bool WareHouse::orderExists(int orderId) const
 {
-    return orderId <= orderCounter;
+    return orderId < orderCounter;
 }
 bool WareHouse::volunteerExists(int volunteerId) const
 {
-    return volunteerId <= volunteerCounter;
+    return volunteerId < volunteerCounter;
 }
 void WareHouse::simulateStep(int numOfSteps) {
     for (int i = 1; i <= numOfSteps; i++) {
-		for (Order* pendingOrder: pendingOrders) {
-			for (Volunteer *volunteer: volunteers) {
-				if(pendingOrder->getStatus() == OrderStatus::PENDING) {//problem
-					if (volunteer->canTakeOrder(*pendingOrder)) {
-						pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
-											[pendingOrder](const Order* o) { return o == pendingOrder; }),
-								pendingOrders.end());
-						if (pendingOrder->getStatus() == OrderStatus::COLLECTING) {
-							pendingOrder->setDriverId(volunteer->getId());
-							pendingOrder->setStatus(OrderStatus::DELIVERING);
-						}
-						else if (pendingOrder->getStatus() == OrderStatus::PENDING) {
-							pendingOrder->setCollectorId(volunteer->getId());
-							pendingOrder->setStatus(OrderStatus::COLLECTING);
-						}
-                        //if (volunteer->getCompletedOrderId() == NO_ORDER)
-                        //volunteer->acceptOrder(*pendingOrder);
-						inProcessOrders.push_back(pendingOrder);
-					}
-				}
-			}
-		}
+        for (Volunteer* vol : volunteers){
+            for (std::vector<Order*>::size_type j = 0; j < pendingOrders.size(); j++) {
+                Order* order = pendingOrders.at(j);
+
+                if (vol->canTakeOrder(*order)) {
+                    if (order->getStatus() == OrderStatus::PENDING){
+                        vol->acceptOrder(*order);
+                        order->setStatus(OrderStatus::COLLECTING);
+                        order->setCollectorId(vol->getId());
+                    }
+                    else if (order->getStatus() == OrderStatus::COLLECTING){
+                        vol->acceptOrder(*order);
+                        order->setStatus(OrderStatus::DELIVERING);
+                        order->setDriverId(vol->getId());
+                    }
+
+                    // removing from pending and pushing into inProcess
+                    inProcessOrders.push_back(order);
+                    pendingOrders.erase(pendingOrders.begin() + j);
+                    j = j - 1; // decrease by one so we dont skip because of the erase
+                }
+            }
+        }
+
+
 		for (Volunteer* volunteer: volunteers) {
 			volunteer->step();
 		}
-		for (Volunteer* volunteer: volunteers) {
+
+        // loop that checks for finished volunteers
+		for (std::vector<Volunteer*>::size_type i = 0; i < volunteers.size(); i++) {
+            Volunteer* volunteer = volunteers.at(i);
 			if (volunteer->getCompletedOrderId() != NO_ORDER) {
-				for (Order* order: inProcessOrders) {
-					if (order->getStatus() == OrderStatus::COLLECTING) {
-						pendingOrders.push_back(order);
-					}
-					else if (order->getStatus() == OrderStatus::DELIVERING) {
-						order->setStatus(OrderStatus::COMPLETED);
-						completedOrders.push_back(order);
-					}
-                    pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),//problem
-											[order](const Order* o) { return o == order; }),
-								pendingOrders.end());
-				}
+                Order* completedOrder = &(this->getOrder(volunteer->getCompletedOrderId()));
+
+                if (completedOrder->getStatus() == OrderStatus::COLLECTING) {
+                    pendingOrders.push_back(completedOrder);
+                    inProcessOrders.erase(remove_if(inProcessOrders.begin(), inProcessOrders.end(),//problem
+                                       [completedOrder](const Order* o) { return o == completedOrder; }),
+                            inProcessOrders.end());
+                }
+                else if (completedOrder->getStatus() == OrderStatus::DELIVERING) {
+                    completedOrder->setStatus(OrderStatus::COMPLETED);
+                    completedOrders.push_back(completedOrder);
+                    inProcessOrders.erase(remove_if(inProcessOrders.begin(), inProcessOrders.end(),//problem
+                                        [completedOrder](const Order* o) { return o == completedOrder; }),
+                            inProcessOrders.end());
+                }
+                
+				
 			}
 		}
-		for (Volunteer* volunteer: volunteers) {
-			if (!volunteer->hasOrdersLeft()) {
+
+        // loop that checks for volunteers who need to be deleted
+		for (std::vector<Volunteer*>::size_type i = 0; i < volunteers.size(); i++) {
+            Volunteer* volunteer = volunteers.at(i);
+			if (!volunteer->hasOrdersLeft() && volunteer->getActiveOrderId() == NO_ORDER && volunteer->getCompletedOrderId() != NO_ORDER) {
 				delete volunteer;
-				volunteers.erase(remove_if(volunteers.begin(), volunteers.end(),
-											[volunteer](const Volunteer* o) { return o == volunteer; }),
-								volunteers.end());
+				volunteers.erase(volunteers.begin() + i);
+                i = i - 1; // so we dont skip
 			}
 		}
 	}
@@ -369,6 +384,13 @@ WareHouse::~WareHouse() {
     for (BaseAction* act : actionsLog){
         delete act;
     }
+
+    pendingOrders.clear();
+    inProcessOrders.clear();
+    completedOrders.clear();
+    volunteers.clear();
+    customers.clear();
+    actionsLog.clear();
 
     // deleting defaults
     delete defaultCustomer;
@@ -504,6 +526,11 @@ WareHouse& WareHouse::operator=(const WareHouse& other){
     {
         this->customers.push_back(cust->clone());
     }
+
+    //deleting defaults
+    delete defaultCustomer;
+    delete defaultVolunteer;
+    delete defaultOrder;
 
     // copying defaults
     this->defaultCustomer = other.defaultCustomer->clone();
