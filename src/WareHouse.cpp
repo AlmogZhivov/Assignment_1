@@ -59,10 +59,6 @@ WareHouse::WareHouse(const string& configFilePath)
                 CustomerConfig customer;
                 if (iss >> customer.name >> customer.type >> customer.distance >> customer.maxOrders) {
                     if (customer.type == "soldier") {
-                        //cout << "mahsan: " + to_string(customerCounter) << endl;
-                        //cout << "mahsan: " + customer.name << endl;
-                        //cout << "mahsan: " + to_string(customer.distance) << endl;
-                        //cout << "mahsan: " + to_string(customer.maxOrders) << endl;
                         customers.push_back(new SoldierCustomer(customerCounter, customer.name, customer.distance, customer.maxOrders));
                     } 
                     else if (customer.type == "civilian") {
@@ -114,7 +110,6 @@ void WareHouse::start()
         }
         else if (command == "order")
         {
-            //cout << "insideOrder: " + to_string(stoi(vecOfInput.at(1))) << endl;
             AddOrder orderAction(stoi(vecOfInput.at(1)));
             orderAction.setActionString(inputString);
             orderAction.act(*this);
@@ -226,9 +221,8 @@ void WareHouse::simulateStep(int numOfSteps) {
     for (int i = 1; i <= numOfSteps; i++) {
 		for (Order* pendingOrder: pendingOrders) {
 			for (Volunteer *volunteer: volunteers) {
-				if(pendingOrder->getStatus() == OrderStatus::PENDING) {
+				if(pendingOrder->getStatus() == OrderStatus::PENDING) {//problem
 					if (volunteer->canTakeOrder(*pendingOrder)) {
-                        volunteer->acceptOrder(*pendingOrder);
 						pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
 											[pendingOrder](const Order* o) { return o == pendingOrder; }),
 								pendingOrders.end());
@@ -240,6 +234,8 @@ void WareHouse::simulateStep(int numOfSteps) {
 							pendingOrder->setCollectorId(volunteer->getId());
 							pendingOrder->setStatus(OrderStatus::COLLECTING);
 						}
+                        //if (volunteer->getCompletedOrderId() == NO_ORDER)
+                        //volunteer->acceptOrder(*pendingOrder);
 						inProcessOrders.push_back(pendingOrder);
 					}
 				}
@@ -258,7 +254,7 @@ void WareHouse::simulateStep(int numOfSteps) {
 						order->setStatus(OrderStatus::COMPLETED);
 						completedOrders.push_back(order);
 					}
-					pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
+                    pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),//problem
 											[order](const Order* o) { return o == order; }),
 								pendingOrders.end());
 				}
@@ -278,18 +274,18 @@ string WareHouse::stringOrdersWhenClose() const {
     string output = "";
     for (Order* order : pendingOrders) {
 		output += "OrderId: " + to_string(order->getId());
-		output += " CustomerId: " + to_string(order->getCustomerId());
-		output += " OrderStatus: " + order->getStringStatus();
+		output += ", CustomerId: " + to_string(order->getCustomerId());
+		output += ", OrderStatus: " + order->getStringStatus() + "\n";
 	}
     for (Order* order : inProcessOrders) {
 		output += "OrderId: " + to_string(order->getId());
-		output += " CustomerId: " + to_string(order->getCustomerId());
-		output += " OrderStatus: " + order->getStringStatus();
+		output += ", CustomerId: " + to_string(order->getCustomerId());
+		output += ", OrderStatus: " + order->getStringStatus() + "\n";
 	}
 	for (Order* order : completedOrders) {
 		output += "OrderId: " + to_string(order->getId());
-		output += " CustomerId: " + to_string(order->getCustomerId());
-		output += " OrderStatus: " + order->getStringStatus();
+		output += ", CustomerId: " + to_string(order->getCustomerId());
+		output += ", OrderStatus: " + order->getStringStatus() + "\n";
 	}
     return output;
 }
@@ -297,16 +293,12 @@ void WareHouse::addOrder(Order* order){
     if (order != nullptr){
         pendingOrders.push_back(order);
         orderCounter = orderCounter + 1;
-        //cout << "inWarehouse: " + to_string(orderCounter) << endl;
     }
 }
 
 // assumes customerId is a valid id
 Customer& WareHouse::getCustomer(int customerId) const {
     for (Customer* cus : customers){
-        //cout << "here2: " + to_string(cus->getId()) << endl;
-	    //cout << "here2: " + cus->getName() << endl;
-	    //cout << "here2: " + to_string(cus->getMaxOrders()) << endl;
         if ((*cus).getId() == customerId){
             return *cus;
         }
