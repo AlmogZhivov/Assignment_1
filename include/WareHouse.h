@@ -43,23 +43,20 @@ class WareHouse {
         WareHouse(WareHouse&& other);
         WareHouse& operator=(WareHouse&& other);
 
-
-
-
-
     private:
         bool isOpen;
+        int customerCounter; //For assigning unique customer IDs
+        int volunteerCounter; //For assigning unique volunteer IDs
+        int orderCounter;
+        
+        Order* defaultOrder;
+        Customer* defaultCustomer;
+        Volunteer* defaultVolunteer;
+        
         vector<BaseAction*> actionsLog;
         vector<Volunteer*> volunteers;
         vector<Order*> pendingOrders;
         vector<Order*> inProcessOrders;
         vector<Order*> completedOrders;
         vector<Customer*> customers;
-        int customerCounter; //For assigning unique customer IDs
-        int volunteerCounter; //For assigning unique volunteer IDs
-        int orderCounter;
-
-        Order* defaultOrder;
-        Customer* defaultCustomer;
-        Volunteer* defaultVolunteer;
 };

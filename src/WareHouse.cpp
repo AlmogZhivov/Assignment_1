@@ -15,15 +15,8 @@
 #include "../include/Order.h"
 using namespace std;
 
-WareHouse::WareHouse() : isOpen(false)
+WareHouse::WareHouse()
 {
-    customerCounter = 0;
-    volunteerCounter = 0;
-    orderCounter = 0;
-
-    defaultOrder = new Order(-1, NO_VOLUNTEER, NO_VOLUNTEER);
-    defaultCustomer = new CivilianCustomer(NO_VOLUNTEER, "Default", 1, 1);
-    defaultVolunteer = new LimitedCollectorVolunteer(NO_VOLUNTEER, "Default", 1, 0);
 }
 struct CustomerConfig {
     std::string name;
@@ -235,6 +228,7 @@ void WareHouse::simulateStep(int numOfSteps) {
 			for (Volunteer *volunteer: volunteers) {
 				if(pendingOrder->getStatus() == OrderStatus::PENDING) {
 					if (volunteer->canTakeOrder(*pendingOrder)) {
+                        volunteer->acceptOrder(*pendingOrder);
 						pendingOrders.erase(remove_if(pendingOrders.begin(), pendingOrders.end(),
 											[pendingOrder](const Order* o) { return o == pendingOrder; }),
 								pendingOrders.end());

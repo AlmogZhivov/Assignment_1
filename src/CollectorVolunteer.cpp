@@ -43,12 +43,12 @@
         if (isBusy())
         {
             output += "isBusy: True\n";
-            output += "OrderID: " + activeOrderId;
+            output += "OrderID: " + std::to_string(activeOrderId) + "\n";
         }
         else
         {
             output += "isBusy: False\n";
-            output += "OrderID: None";
+            output += "OrderID: None\n";
         }
 
         output += "timeLeft: " + std::to_string(timeLeft) + "\n";
