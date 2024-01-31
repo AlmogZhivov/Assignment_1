@@ -68,6 +68,7 @@ void AddOrder::act(WareHouse &wareHouse)
 	if (customer.getId() == -1 || !customer.canMakeOrder()) {
 		cout << "Cannot place this order" << endl;
 		error("Cannot place this order");
+		wareHouse.addAction(new AddOrder(*this));
 	}
 	else {
 		Order *order = new Order(wareHouse.getOrderCounter(), customerId, customer.getCustomerDistance());
@@ -133,6 +134,7 @@ void PrintOrderStatus::act(WareHouse &wareHouse)
 	if (!wareHouse.orderExists(orderId)) {
 		cout << "Order doesn't exist" << endl;
 		error("Order doesn't exist");
+		wareHouse.addAction(new PrintOrderStatus(*this));
 	}
 	else {
 		Order &order = wareHouse.getOrder(orderId);
@@ -162,6 +164,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
 	if (!wareHouse.customerExists(customerId)) {
 		cout << "Customer doesn't exist" << endl;
 		error("Customer doesn't exist");
+		wareHouse.addAction(new PrintCustomerStatus(*this));
 	}
 	else {
 		Customer &customer = wareHouse.getCustomer(customerId);
@@ -199,6 +202,7 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse)
 	{
 		cout << "Volunteer doesn't exist" << endl;
 		error("Volunteer doesn't exist");
+		wareHouse.addAction(new PrintVolunteerStatus(*this));
 	}
 	else {
 		cout << volunteer.toString() << endl;
@@ -239,7 +243,7 @@ PrintActionsLog *PrintActionsLog::clone() const
 {
     return new PrintActionsLog(*this);
 }
-// Close Class - free memory?
+// Close Class
 Close::Close()
 {
 }
