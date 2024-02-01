@@ -288,19 +288,19 @@ void WareHouse::simulateStep(int numOfSteps) {
 string WareHouse::stringOrdersWhenClose() const {
     string output = "";
     for (Order* order : pendingOrders) {
-		output += "OrderId: " + to_string(order->getId());
-		output += ", CustomerId: " + to_string(order->getCustomerId());
-		output += ", OrderStatus: " + order->getStringStatus() + "\n";
+		output += "OrderID: " + to_string(order->getId());
+		output += ", CustomerID: " + to_string(order->getCustomerId());
+		output += ", Status: " + order->getStringStatus() + "\n";
 	}
     for (Order* order : inProcessOrders) {
-		output += "OrderId: " + to_string(order->getId());
-		output += ", CustomerId: " + to_string(order->getCustomerId());
-		output += ", OrderStatus: " + order->getStringStatus() + "\n";
+		output += "OrderID: " + to_string(order->getId());
+		output += ", CustomerID: " + to_string(order->getCustomerId());
+		output += ", Status: " + order->getStringStatus() + "\n";
 	}
 	for (Order* order : completedOrders) {
-		output += "OrderId: " + to_string(order->getId());
-		output += ", CustomerId: " + to_string(order->getCustomerId());
-		output += ", OrderStatus: " + order->getStringStatus() + "\n";
+		output += "OrderID: " + to_string(order->getId());
+		output += ", CustomerID: " + to_string(order->getCustomerId());
+		output += ", Status: " + order->getStringStatus() + "\n";
 	}
     return output;
 }
