@@ -147,7 +147,7 @@ string PrintOrderStatus::toString() const
 	if (getStatus() == ActionStatus::COMPLETED)
 		return actionString + " Completed";
 	else
-		return actionString + " Error: " + getErrorMsg();
+		return actionString + " Error" + getErrorMsg();
 }
 PrintOrderStatus *PrintOrderStatus::clone() const
 {
@@ -270,8 +270,9 @@ void BackupWareHouse::act(WareHouse &wareHouse)
     if (backup != nullptr)
 		delete backup;
 	complete();
-	wareHouse.addAction(new BackupWareHouse(*this));
+	//change order
 	backup = new WareHouse(wareHouse);
+	wareHouse.addAction(new BackupWareHouse(*this));
 }
 string BackupWareHouse::toString() const
 {
@@ -295,7 +296,7 @@ void RestoreWareHouse::act(WareHouse &wareHouse)
 	else
 	{
 		wareHouse = *backup;
-		complete();
+		complete();	
 	}
 	wareHouse.addAction(new RestoreWareHouse(*this));
 }
