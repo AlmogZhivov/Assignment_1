@@ -43,6 +43,14 @@
         "ostream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+<<<<<<< HEAD
+        "typeinfo": "cpp",
+        "fstream": "cpp",
+        "sstream": "cpp"
     }
+=======
+        "typeinfo": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+>>>>>>> Customer-Volunteer-Order
 }

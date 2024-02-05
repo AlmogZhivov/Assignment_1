@@ -1,9 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "WareHouse.h"
+#include "../include/WareHouse.h"
 using std::string;
 using std::vector;
+#include <iostream>
+using namespace std;
+
 
 enum class ActionStatus{
     COMPLETED, ERROR
@@ -18,14 +21,16 @@ class BaseAction{
     public:
         BaseAction();
         ActionStatus getStatus() const;
+        void setActionString(string str); // Added method for actionsLog
         virtual void act(WareHouse& wareHouse)=0;
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
-
+        virtual ~BaseAction() = 0;
     protected:
         void complete();
         void error(string errorMsg);
         string getErrorMsg() const;
+        string actionString;
 
     private:
         string errorMsg;
@@ -66,6 +71,7 @@ class AddCustomer : public BaseAction {
         const CustomerType customerType;
         const int distance;
         const int maxOrders;
+        string EnumToStringCustomer(CustomerType type);
 };
 
 
